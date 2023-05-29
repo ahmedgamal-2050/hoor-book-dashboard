@@ -138,14 +138,40 @@
                                   
                 </v-card-text>
 
+                <hr/>
+
                 <v-card-text>
-                  <VFileInputWithValidation
-                    rules="required"
-                    label="صورة الوسائط"
-                    variant="filled"
-                    prepend-icon="camera"
-                    v-model="admin.media"
-                  />
+                  <div>
+                    <h4>الوسائط</h4>
+
+                    <v-spacer></v-spacer>
+                    
+                    <v-tooltip right>
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-btn
+                          color="primary"
+                          fab
+                          small
+                          v-bind="attrs"
+                          v-on="on"
+                          @click="addFind()"
+                        >
+                          <v-icon>add</v-icon>
+                        </v-btn>
+                      </template>
+                      <span>اضافة عنصر جديد</span>
+                    </v-tooltip>
+                  </div>
+
+                  <div v-for="(find, index) in admin.media">
+                    <VFileInputWithValidation
+                      rules="required"
+                      label="صورة الوسائط"
+                      variant="filled"
+                      prepend-icon="camera"
+                      v-model="find.value" :key="index"
+                    />
+                  </div>
                 </v-card-text>
 
                 <!-- <v-card-text v-for="(color, index) in admin.colors">
@@ -499,6 +525,7 @@ export default {
   created() {
     if (this.loading) return;
     this.fetch();
+    this.addFind();
   },
   methods: {
     ...mapActions(["showNotification"]),
@@ -603,12 +630,12 @@ export default {
       if (this.admin.offer) formdata.append("offer", this.admin.offer);
       if (this.admin.image) formdata.append("image", this.admin.image);
       if (this.admin.category_id) formdata.append("category_id", this.admin.category_id);
-      if (this.admin.media) formdata.append("media[]", this.admin.media);
-      // if (this.admin.media && this.admin.media.length > 0) {
-      //   for (var i = 0; i < this.admin.media.length; i++) {
-      //     formData.append('media[]', this.admin.media[i]);
-      //   }
-      // }
+      //if (this.admin.media) formdata.append("media[]", this.admin.media);
+      if (this.admin.media && this.admin.media.length > 0) {
+        for (var i = 0; i < this.admin.media.length; i++) {
+          formdata.append('media[]', this.admin.media[i].value);
+        }
+      }
       // if (this.admin.colors) formdata.append("colors", this.admin.colors);
 
       if (this.edit) {
@@ -744,6 +771,9 @@ export default {
         }
       });
     },
+    addFind: function () {
+      this.admin.media.push({ value: '' });
+    }
   },
 };
 </script>

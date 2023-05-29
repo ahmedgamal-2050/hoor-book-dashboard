@@ -36,7 +36,7 @@
               </ul>
             </v-card-text>
             <v-card-text>
-              <VTextWithValidation
+              <VTextFieldWithValidation
                 rules="required|email"
                 v-model="targetEmail"
                 label="البريد الإليكتروني"
@@ -95,14 +95,14 @@
               </small>
             </v-card-text>
             <v-card-text>
-              <VTextWithValidation
+              <VTextFieldWithValidation
                 rules="required"
                 label="كود التأكد"
                 v-model="vervicationForm.email_code"
                 prepend-icon="vpn_key"
               />
 
-              <VTextWithValidation
+              <VTextFieldWithValidation
                 rules="required|min:8"
                 label="كلمة السر"
                 v-model="vervicationForm.password"
@@ -112,7 +112,7 @@
                 @click:append="password_show = !password_show"
               />
 
-              <VTextWithValidation
+              <VTextFieldWithValidation
                 rules="required|password:@كلمة السر"
                 label="تأكيد كلمة السر"
                 v-model="vervicationForm.password_confirmation"
@@ -149,7 +149,7 @@
 </template>
 
 <script>
-import VTextWithValidation from "../../components/inputs/VTextWithValidation";
+import VTextFieldWithValidation from "../../components/inputs/VTextFieldWithValidation";
 
 export default {
   data: () => ({
@@ -175,7 +175,7 @@ export default {
     resendProccessDone: false,
   }),
   components: {
-    VTextWithValidation,
+    VTextFieldWithValidation,
   },
   methods: {
     sendCode() {
