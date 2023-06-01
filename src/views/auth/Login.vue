@@ -3,7 +3,7 @@
     <v-card class="elevation-12">
       <v-toolbar color="primary">
         <v-toolbar-title style="color:white;">
-          لوحة تحكم لتسكنوا
+          لوحة تحكم Hoor Book
         </v-toolbar-title>
         <v-spacer></v-spacer>
         <v-tooltip bottom>

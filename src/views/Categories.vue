@@ -67,13 +67,15 @@
                   />
                   <div>
                     <v-avatar dark v-bind="attrs" v-on="on">
-                      <span v-if="admin.image === null">لا يوجد صورة</span>
+                      <span v-if="admin.image === null || admin.image === ''">لا يوجد صورة</span>
+                      <div v-else-if="typeof admin.image === 'object'"></div>
 
-                      <img
-                        v-else
-                        :src="`http://localhost:8080/${admin.image}`"
-                        alt="صورة المنتج"
-                      />
+                      <a v-else :href="`${baseUrl}/${admin.image}`" target="_blank">
+                        <img
+                          :src="`${baseUrl}/${admin.image}`"
+                          alt="صورة المنتج"
+                        />
+                      </a>
                     </v-avatar>
                   </div>
 
@@ -154,11 +156,12 @@
               src="../assets/imgs/profile-img.jpg"
               alt="صورة المنتج"
             />
-            <img
-              v-else
-              :src="`https://api.letasknoelayha.com/${item.image}`"
-              alt="صورة المنتج"
-            />
+            <a v-else :href="`${baseUrl}/${item.image}`" target="_blank">
+              <img
+                :src="`${baseUrl}/${item.image}`"
+                alt="صورة المنتج"
+              />
+            </a>
           </v-avatar>
         </template>
         
@@ -263,6 +266,7 @@ const headerConst = { align: "center", sortable: false };
 import VTextFieldWithValidation from "../components/inputs/VTextFieldWithValidation";
 import VFileInputWithValidation from "../components/inputs/VFileInputWithValidation";
 import { mapActions } from "vuex";
+import { BASE_URL } from "../config/config";
 
 export default {
   props: {
@@ -311,7 +315,7 @@ export default {
     pages: 0,
     index: null,
     file: null,
-
+    baseUrl: BASE_URL,
   }),
   components: {
     VTextFieldWithValidation,

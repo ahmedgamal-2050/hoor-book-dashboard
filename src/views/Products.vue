@@ -146,7 +146,7 @@
 
                     <v-spacer></v-spacer>
                     
-                    <v-tooltip right>
+                    <v-tooltip left>
                       <template v-slot:activator="{ on, attrs }">
                         <v-btn
                           color="primary"
@@ -164,13 +164,36 @@
                   </div>
 
                   <div v-for="(find, index) in admin.media">
-                    <VFileInputWithValidation
-                      rules="required"
-                      label="صورة الوسائط"
-                      variant="filled"
-                      prepend-icon="camera"
-                      v-model="find.value" :key="index"
-                    />
+                    <div class="d-flex align-items-center">
+                      <VFileInputWithValidation
+                        class="w-100"
+                        rules="required"
+                        label="صورة الوسائط"
+                        variant="filled"
+                        prepend-icon="camera"
+                        v-model="find.value" :key="index"
+                      />
+                      
+                      <v-tooltip left>
+                        <template v-slot:activator="{ on, attrs }">
+                          <v-btn
+                            class="mx-3"
+                            color="red"
+                            icon
+                            x-small
+                            v-bind="attrs"
+                            v-on="on"
+                            @click="deleteFind(index)"
+                          >
+                            <v-icon>delete_forever</v-icon>
+                          </v-btn>
+                        </template>
+                        <span>حذف</span>
+                      </v-tooltip>
+                    </div>
+                    <div class="fz12 text-red" v-if="showMediaError">
+                      يجب ادخال وسيط واحد على الأقل
+                    </div>
                   </div>
                 </v-card-text>
 
@@ -274,11 +297,12 @@
               src="../assets/imgs/profile-img.jpg"
               alt="صورة المنتج"
             />
-            <img
-              v-else
-              :src="`https://api.letasknoelayha.com/${item.image}`"
-              alt="صورة المنتج"
-            />
+            <a v-else :href="`${baseUrl}/${item.image}`" target="_blank">
+              <img
+                :src="`${baseUrl}/${item.image}`"
+                alt="صورة المنتج"
+              />
+            </a>
           </v-avatar>
         </template>
 
@@ -292,10 +316,12 @@
             <div><b># </b>{{ item.category.id }}</div>
             <div><b>الاسم: </b>{{ item.category.name }}</div>
             <div>
-              <img
-                :src="`http://143.110.170.3/${item.category.image}`"
-                alt="صورة الفئة"
-              />
+              <a :href="`${baseUrl}/${item.category.image}`" target="_blank">
+                <img
+                  :src="`${baseUrl}/${item.category.image}`"
+                  alt="صورة الفئة"
+                />
+              </a>
             </div>
           </div>
           <v-chip v-else small color="secondary" dark>غير متوفر</v-chip>
@@ -441,6 +467,7 @@ import VTextFieldWithValidation from "../components/inputs/VTextFieldWithValidat
 import VFileInputWithValidation from "../components/inputs/VFileInputWithValidation";
 import VSelectWithValidation from "../components/inputs/VSelectWithValidation";
 import { mapActions } from "vuex";
+import { BASE_URL } from "../config/config";
 
 export default {
   props: {
@@ -502,6 +529,8 @@ export default {
     page: 1,
     pages: 0,
     index: null,
+    baseUrl: BASE_URL,
+    showMediaError: false,
   }),
   components: {
     VTextFieldWithValidation,
@@ -749,7 +778,7 @@ export default {
             let items = res.data.map((item) => {
               return item.id;
             });
-            console.log('getCategoriesId items >>', items);
+            //console.log('getCategoriesId items >>', items);
             this.category_ids = items;
           });
         }
@@ -765,7 +794,7 @@ export default {
             let items = res.data.map((item) => {
               return item.id;
             });
-            console.log('getColorIds items >>', items);
+            //console.log('getColorIds items >>', items);
             this.color_ids = items;
           });
         }
@@ -773,7 +802,17 @@ export default {
     },
     addFind: function () {
       this.admin.media.push({ value: '' });
-    }
+      this.showMediaError = false;
+    },
+    deleteFind: function (index) {
+      if (this.admin.media.length > 1) {
+        this.admin.media.splice(index, 1);
+        this.showMediaError = false;
+      }
+      else {
+        this.showMediaError = true;
+      }
+    },
   },
 };
 </script>
@@ -783,5 +822,24 @@ export default {
 .v-data-table > .v-data-table__wrapper > table > tfoot > tr > td,
 .v-data-table > .v-data-table__wrapper > table > thead > tr > td {
   height: 80px !important;
+}
+
+.d-flex {
+  display: flex;
+}
+.w-100 {
+  width: 100%;
+}
+.align-items-center {
+  align-items: center;
+}
+.mx-3 {
+  margin-inline: 1rem;
+}
+.fz12 {
+  font-size: 12px;
+} 
+.text-red {
+  color: red;
 }
 </style>

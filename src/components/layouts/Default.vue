@@ -12,7 +12,7 @@
       <v-spacer></v-spacer>
 
       <span class="white--text"
-        >لتسكنوا &copy; {{ new Date().getFullYear() }}
+        >Hoor Book &copy; {{ new Date().getFullYear() }}
       </span>
     </v-footer>
   </fragment>
