@@ -53,7 +53,9 @@
                   <VSelectWithValidation
                     label="شركات الشحن #"
                     rules="required"
-                    :items="shipping_companies_ids"           
+                    :items="shipping_companies_ids" 
+                    item-text="name"
+                    item-value="id"          
                     prepend-icon="lock"
                     v-model="admin.shipping_companies_id"
                   />
@@ -317,7 +319,10 @@ export default {
 
           this.$http.get(endpoint).then((res) => {
             let items = res.data.map((item) => {
-              return item.id;
+              return {
+                id: item.id,
+                name: item.name_ar
+              };
             });
             console.log('getDataFromApi items >>', items);
             this.shipping_companies_ids = items;

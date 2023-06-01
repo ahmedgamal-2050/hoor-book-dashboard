@@ -131,7 +131,9 @@
                   <VSelectWithValidation
                     label="الفئات #"
                     rules="required"
-                    :items="category_ids"           
+                    :items="category_ids"
+                    item-text="name"
+                    item-value="id"
                     prepend-icon="lock"
                     v-model="admin.category_id"
                   />
@@ -200,7 +202,9 @@
                 <!-- <v-card-text v-for="(color, index) in admin.colors">
                   <VSelectWithValidation
                     label="الفئات #"
-                    :items="category_ids"           
+                    :items="category_ids" 
+                    item-text="name"
+                    item-value="id"          
                     prepend-icon="lock"
                     v-model="color[index].color_id"
                   />
@@ -782,9 +786,11 @@ export default {
 
           this.$http.get(endpoint).then((res) => {
             let items = res.data.map((item) => {
-              return item.id;
+              return {
+                id: item.id,
+                name: item.name_ar
+              };
             });
-            //console.log('getCategoriesId items >>', items);
             this.category_ids = items;
           });
         }
@@ -798,7 +804,10 @@ export default {
 
           this.$http.get(endpoint).then((res) => {
             let items = res.data.map((item) => {
-              return item.id;
+              return {
+                id: item.id,
+                name: item.name_ar
+              };
             });
             //console.log('getColorIds items >>', items);
             this.color_ids = items;

@@ -59,7 +59,9 @@
                   <VSelectWithValidation
                     label="كود المدينة"
                     rules="required"
-                    :items="cities_ids"           
+                    :items="cities_ids"
+                    item-text="name"
+                    item-value="id"
                     prepend-icon="lock"
                     v-model="admin.city_id"
                   />
@@ -365,7 +367,10 @@ export default {
 
           this.$http.get(endpoint).then((res) => {
             let items = res.data.map((item) => {
-              return item.id;
+              return {
+                id: item.id,
+                name: item.name_ar
+              };
             });
             this.cities_ids = items;
           });

@@ -59,7 +59,9 @@
                   <VSelectWithValidation
                     label="كود المحافظة"
                     rules="required"
-                    :items="governorate_ids"           
+                    :items="governorate_ids"
+                    item-text="name"
+                    item-value="id"           
                     prepend-icon="lock"
                     v-model="admin.governorate_id"
                   />
@@ -354,9 +356,11 @@ export default {
 
           this.$http.get(endpoint).then((res) => {
             let items = res.data.map((item) => {
-              return item.id;
+              return {
+                id: item.id,
+                name: item.name_ar
+              };
             });
-            console.log('getDataFromApi items >>', items);
             this.governorate_ids = items;
           });
         }
