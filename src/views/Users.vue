@@ -744,6 +744,12 @@ export default {
               items,
               total,
             });
+          })
+          .catch((error) => {
+            if (error.message.includes('code 401')) {
+              console.log('auth error >>');
+              this.$router.push({ path: '/auth/login' })
+            }
           });
         }
       });
