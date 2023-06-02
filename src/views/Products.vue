@@ -250,8 +250,6 @@
                         />
                         
                         <VFileInputWithValidation
-                          class="w-100"
-                          rules="required"
                           label="صورة الوسائط"
                           prepend-icon="camera"
                           v-model="color.media" 
@@ -634,7 +632,7 @@ export default {
     fetch() {
       this.getDataFromApi().then((data) => {
         this.requests = JSON.parse(JSON.stringify(data.items));
-        console.log('getDataFromApi requests >>', data.items);
+        //console.log('getDataFromApi requests >>', data.items);
         let meta = data.meta;
         this.totalRequests = meta.total;
         this.pagination.rowsPerPage = meta.per_page;
@@ -653,8 +651,8 @@ export default {
 
           this.$http.get(endpoint).then((res) => {
             let items = res.data.data;
-            console.log('getDataFromApi items >>', items);
-            let meta = res.data;
+            //console.log('getDataFromApi items >>', items);
+            let meta = res.data.meta;
             this.loading = false;
             resolve({
               items,
@@ -663,7 +661,7 @@ export default {
           })
           .catch((error) => {
             if (error.message.includes('code 401')) {
-              console.log('auth error >>');
+              //console.log('auth error >>');
               this.$router.push({ path: '/auth/login' })
             }
           });
@@ -744,11 +742,12 @@ export default {
       }
       if (this.admin.colors && this.admin.colors.length > 0) {
         for (var i = 0; i < this.admin.colors.length; i++) {
-          console.log('add color >>', JSON.stringify(this.admin.colors[i]))
-          formdata.append('colors[]', JSON.stringify(this.admin.colors[i]));
-          // stock: null,
-          // color_id: null,
-          // media: null
+          // console.log('add color color_id >>', this.admin.colors[i].color_id)
+          // console.log('add color stock >>', this.admin.colors[i].stock)
+          // console.log('add color media >>', this.admin.colors[i].media)
+          formdata.append(`colors.${i}.color_id`, this.admin.colors[i].color_id);
+          formdata.append(`colors.${i}.stock`, this.admin.colors[i].stock);
+          if (this.admin.colors[i].media) formdata.append(`colors.${i}.media`, this.admin.colors[i].media);
         }
       }
 
