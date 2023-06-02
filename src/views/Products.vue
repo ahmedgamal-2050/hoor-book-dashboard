@@ -143,7 +143,7 @@
                 <hr/>
 
                 <v-card-text>
-                  <div>
+                  <div class="d-flex align-items-center">
                     <h4>الوسائط</h4>
 
                     <v-spacer></v-spacer>
@@ -156,7 +156,7 @@
                           small
                           v-bind="attrs"
                           v-on="on"
-                          @click="addFind()"
+                          @click="addMedia()"
                         >
                           <v-icon>add</v-icon>
                         </v-btn>
@@ -173,7 +173,8 @@
                         label="صورة الوسائط"
                         variant="filled"
                         prepend-icon="camera"
-                        v-model="find.value" :key="index"
+                        v-model="find.value" 
+                        :key="index"
                       />
                       
                       <v-tooltip left>
@@ -185,7 +186,7 @@
                             x-small
                             v-bind="attrs"
                             v-on="on"
-                            @click="deleteFind(index)"
+                            @click="deleteMedia(index)"
                           >
                             <v-icon>delete_forever</v-icon>
                           </v-btn>
@@ -199,24 +200,88 @@
                   </div>
                 </v-card-text>
 
-                <!-- <v-card-text v-for="(color, index) in admin.colors">
-                  <VSelectWithValidation
-                    label="الفئات #"
-                    :items="category_ids" 
-                    item-text="name"
-                    item-value="id"          
-                    prepend-icon="lock"
-                    v-model="color[index].color_id"
-                  />
+                <hr/>
+                
+                <v-card-text>
                   
-                  <VFileInputWithValidation
-                    rules="required"
-                    label="الصورة"
-                    variant="filled"
-                    prepend-icon="camera"
-                    v-model="color[index].image"
-                  />
-                </v-card-text> -->
+                  <div class="d-flex align-items-center">
+                    <h4>الألوان</h4>
+
+                    <v-spacer></v-spacer>
+                    
+                    <v-tooltip left>
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-btn
+                          color="primary"
+                          fab
+                          small
+                          v-bind="attrs"
+                          v-on="on"
+                          @click="addColor()"
+                        >
+                          <v-icon>add</v-icon>
+                        </v-btn>
+                      </template>
+                      <span>اضافة عنصر جديد</span>
+                    </v-tooltip>
+                  </div>
+
+                  <div v-for="(color, index) in admin.colors">
+                    <div class="d-flex align-items-center">
+                      <div class="w-100">
+                        <VTextFieldWithValidation
+                          rules="required"
+                          prepend-icon="lock"
+                          v-model="color.stock" 
+                          :key="index"
+                          label="المخزون"
+                          type="number"
+                        />
+
+                        <VSelectWithValidation
+                          label="الألوان #"
+                          rules="required"
+                          :items="color_ids"
+                          item-text="code"
+                          item-value="id"
+                          prepend-icon="lock"
+                          v-model="color.color_id" 
+                          :key="index"
+                        />
+                        
+                        <VFileInputWithValidation
+                          class="w-100"
+                          rules="required"
+                          label="صورة الوسائط"
+                          prepend-icon="camera"
+                          v-model="color.media" 
+                          :key="index"
+                        />
+                      </div>
+                      <div left>
+                        <v-tooltip>
+                          <template v-slot:activator="{ on, attrs }">
+                            <v-btn
+                              class="mx-3"
+                              color="red"
+                              icon
+                              x-small
+                              v-bind="attrs"
+                              v-on="on"
+                              @click="deleteColor(index)"
+                            >
+                              <v-icon>delete_forever</v-icon>
+                            </v-btn>
+                          </template>
+                          <span>حذف</span>
+                        </v-tooltip>
+                      </div>
+                    </div>
+                    <div class="fz12 text-warning" v-if="showColorError">
+                      هل أنت متأكد من أنك لا تريد إضافة لون
+                    </div>
+                  </div>
+                </v-card-text>
 
                 <v-card-actions>
                   <v-btn
@@ -499,7 +564,7 @@ export default {
       image: "",
       category_id: null,
       media: [],
-      // colors: []
+      colors: []
     },
     productDiscription: "",
     viewDescriptionDialog: false,
@@ -535,6 +600,7 @@ export default {
     index: null,
     baseUrl: BASE_URL,
     showMediaError: false,
+    showColorError: false,
   }),
   components: {
     VTextFieldWithValidation,
@@ -558,7 +624,10 @@ export default {
   created() {
     if (this.loading) return;
     this.fetch();
-    this.addFind();
+    this.addMedia();
+    this.addColor();
+    this.getCategoriesId();
+    this.getColorIds();
   },
   methods: {
     ...mapActions(["showNotification"]),
@@ -574,8 +643,6 @@ export default {
           this.pagination.totalItems / this.pagination.rowsPerPage
         );
       });
-      this.getCategoriesId();
-      this.getColorIds();
       if (this.loading) return;
     },
     getDataFromApi(res = null) {
@@ -621,7 +688,7 @@ export default {
         image: "",
         category_id: null,
         media: [],
-        // colors: []
+        colors: []
       };
       this.productDiscription = "";
     },
@@ -652,7 +719,7 @@ export default {
       this.admin.image = item.image;
       this.admin.category_id = item.category_id;
       this.admin.media = item.media;
-      // this.admin.colors = item.colors;
+      this.admin.colors = item.colors;
     },
     saveItem() {
       this.connecting = true;
@@ -675,7 +742,15 @@ export default {
           formdata.append('media[]', this.admin.media[i].value);
         }
       }
-      // if (this.admin.colors) formdata.append("colors", this.admin.colors);
+      if (this.admin.colors && this.admin.colors.length > 0) {
+        for (var i = 0; i < this.admin.colors.length; i++) {
+          console.log('add color >>', JSON.stringify(this.admin.colors[i]))
+          formdata.append('colors[]', JSON.stringify(this.admin.colors[i]));
+          // stock: null,
+          // color_id: null,
+          // media: null
+        }
+      }
 
       if (this.edit) {
         let endpoint = `http://143.110.170.3/api/admin/products/${this.admin.id}`;
@@ -694,7 +769,7 @@ export default {
             image: this.admin.image,
             category_id: this.admin.category_id,
             media: this.admin.media,
-            // colors: this.admin.colors,
+            colors: this.admin.colors,
           })
           .then((res) => {
             this.showNotification("تمت العملية بنجاح");
@@ -718,13 +793,14 @@ export default {
               image: "",
               category_id: null,
               media: [],
-              // colors: []
+              colors: []
             };
           })
           .catch(({ response }) => {
             this.errors = response.data.errors;
           });
-      } else {
+      }
+      else {
         this.$http
           .post(`http://143.110.170.3/api/admin/products`, formdata)
           .then((res) => {
@@ -753,7 +829,7 @@ export default {
                 image: "",
                 category_id: null,
                 media: [],
-                // colors: []
+                colors: []
               };
             }
           })
@@ -806,7 +882,7 @@ export default {
             let items = res.data.map((item) => {
               return {
                 id: item.id,
-                name: item.name_ar
+                code: item.code
               };
             });
             //console.log('getColorIds items >>', items);
@@ -815,17 +891,36 @@ export default {
         }
       });
     },
-    addFind: function () {
+    addMedia: function () {
       this.admin.media.push({ value: '' });
       this.showMediaError = false;
     },
-    deleteFind: function (index) {
+    deleteMedia: function (index) {
       if (this.admin.media.length > 1) {
         this.admin.media.splice(index, 1);
         this.showMediaError = false;
       }
       else {
         this.showMediaError = true;
+      }
+    },
+    addColor: function () {
+      this.admin.colors.push(
+        {
+          stock: null,
+          color_id: null,
+          media: null
+        }
+      );
+      this.showColorError = false;
+    },
+    deleteColor: function (index) {
+      this.admin.colors.splice(index, 1);
+      if (this.admin.colors.length < 1) {
+        this.showColorError = true;
+      }
+      else {
+        this.showColorError = false;
       }
     },
   },
@@ -856,5 +951,8 @@ export default {
 } 
 .text-red {
   color: red;
+}
+.text-warning {
+  color: goldenrod;
 }
 </style>
