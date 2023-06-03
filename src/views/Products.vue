@@ -230,7 +230,7 @@
 
                   <!-- Colors Field List -->
                   <div v-for="(color, index) in admin.colors">
-                    <div class="d-flex align-items-center">
+                    <div class="d-flex align-items-center mt-3">
                       <!-- Color Field Item -->
                       <div class="w-100">
                         <VTextFieldWithValidation
@@ -259,7 +259,7 @@
                           <v-tooltip left>
                             <template v-slot:activator="{ on, attrs }">
                               <v-btn 
-                                class="ml10"
+                                class="ml-2"
                                 color="primary"
                                 fab
                                 small
@@ -319,7 +319,7 @@
                               class="mx-3"
                               color="red"
                               icon
-                              x-small
+                              small
                               v-bind="attrs"
                               v-on="on"
                               @click="deleteColor(key)"
@@ -334,6 +334,8 @@
                     <div class="fz12 text-warning" v-if="showColorError">
                       هل أنت متأكد من أنك لا تريد إضافة لون
                     </div>
+
+                    <hr/>
                   </div>
                 </v-card-text>
 
@@ -749,7 +751,6 @@ export default {
       if (process === "add") {
         this.addMedia();
         this.addColor();
-        this.addColorMedia(0);
         this.$nextTick(() => {
           this.$refs.obs.reset();
         });
@@ -778,8 +779,8 @@ export default {
       this.admin.media = item.media;
       if (item.colors && item.colors.length > 0) {
         for (var i = 0; i < item.colors.length; i++) {
-          this.addColor(item.colors[ i ]);
-          
+          this.addColor(item.colors[i]);
+          console.log('color media >>', item.colors[i].media);
           if (item.colors[i].media && item.colors[i].media.length > 0) {
             this.addColorMedia(i, item.colors[i].media);
           }
@@ -977,6 +978,7 @@ export default {
           stock: null,
           media: []
         });
+        this.addColorMedia(this.admin.colors.length - 1);
       }
       else {
         this.admin.colors.push(
@@ -1003,6 +1005,7 @@ export default {
         this.admin.colors[index].media.push({ value: '' });
       }
       else {
+        console.log('color media item >>', item);
         this.admin.colors[index].media.push({ value: item });
       }
       this.showColorError = false;
@@ -1042,7 +1045,11 @@ export default {
 .text-warning {
   color: goldenrod;
 }
-.ml10 {
-  margin-left: 10px;
+.ml-2 {
+  margin-left: 0.5rem;
+}
+
+.mt-3 {
+  margin-top: 1rem;
 }
 </style>
