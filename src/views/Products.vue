@@ -25,6 +25,7 @@
                 ref="changePasswordForm"
                 @submit.prevent="handleSubmit(saveItem)"
               >
+                <!-- Show Error -->
                 <v-card-text class="text-xs-center">
                   <ul style="list-style: none">
                     <li
@@ -142,6 +143,7 @@
 
                 <hr/>
 
+                <!-- Media -->
                 <v-card-text>
                   <div class="d-flex align-items-center">
                     <h4>الوسائط</h4>
@@ -201,9 +203,9 @@
                 </v-card-text>
 
                 <hr/>
-                
-                <v-card-text>
-                  
+
+                <!-- Colors -->
+                <v-card-text>  
                   <div class="d-flex align-items-center">
                     <h4>الألوان</h4>
 
@@ -222,12 +224,14 @@
                           <v-icon>add</v-icon>
                         </v-btn>
                       </template>
-                      <span>اضافة عنصر جديد</span>
+                      <span>اضافة لون جديد</span>
                     </v-tooltip>
                   </div>
 
+                  <!-- Colors Field List -->
                   <div v-for="(color, index) in admin.colors">
                     <div class="d-flex align-items-center">
+                      <!-- Color Field Item -->
                       <div class="w-100">
                         <VTextFieldWithValidation
                           rules="required"
@@ -248,14 +252,66 @@
                           v-model="color.color_id" 
                           :key="index"
                         />
-                        
-                        <VFileInputWithValidation
-                          label="صورة الوسائط"
-                          prepend-icon="camera"
-                          v-model="color.media" 
-                          :key="index"
-                        />
+
+                        <!-- Color Media Field List -->
+                        <div class="d-flex align-items-center">
+                          <!-- Add Color Media -->
+                          <v-tooltip left>
+                            <template v-slot:activator="{ on, attrs }">
+                              <v-btn 
+                                class="ml10"
+                                color="primary"
+                                fab
+                                small
+                                v-bind="attrs"
+                                v-on="on"
+                                @click="addColorMedia(index)"
+                              >
+                                <v-icon>add</v-icon>
+                              </v-btn>
+                            </template>
+                            <span>اضافة صورة لون جديد</span>
+                          </v-tooltip>
+
+                          <!-- Color Media List -->
+                          <div class="w-100">
+                            <div v-for="(med, key) in color.media">
+                              <div class="d-flex align-items-center">
+                                <div class="w-100">
+                                  <VFileInputWithValidation
+                                    label="صورة الوسائط"
+                                    prepend-icon="camera"
+                                    v-model="med.value" 
+                                    :key="key"
+                                  />
+                                </div>
+
+                                <!-- Delete Color Media -->
+                                <div left>
+                                  <v-tooltip>
+                                    <template v-slot:activator="{ on, attrs }">
+                                      <v-btn
+                                        class="mx-3"
+                                        color="red"
+                                        icon
+                                        x-small
+                                        v-bind="attrs"
+                                        v-on="on"
+                                        @click="deleteColorMedia(index, key)"
+                                      >
+                                        <v-icon>delete_forever</v-icon>
+                                      </v-btn>
+                                    </template>
+                                    <span>حذف صورة لون</span>
+                                  </v-tooltip>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
                       </div>
+
+                      <!-- Delete Color Item -->
                       <div left>
                         <v-tooltip>
                           <template v-slot:activator="{ on, attrs }">
@@ -266,12 +322,12 @@
                               x-small
                               v-bind="attrs"
                               v-on="on"
-                              @click="deleteColor(index)"
+                              @click="deleteColor(key)"
                             >
                               <v-icon>delete_forever</v-icon>
                             </v-btn>
                           </template>
-                          <span>حذف</span>
+                          <span>حذف لون</span>
                         </v-tooltip>
                       </div>
                     </div>
@@ -599,6 +655,7 @@ export default {
     baseUrl: BASE_URL,
     showMediaError: false,
     showColorError: false,
+    showColorMediaError: false,
   }),
   components: {
     VTextFieldWithValidation,
@@ -622,8 +679,6 @@ export default {
   created() {
     if (this.loading) return;
     this.fetch();
-    this.addMedia();
-    this.addColor();
     this.getCategoriesId();
     this.getColorIds();
   },
@@ -692,11 +747,15 @@ export default {
     },
     editing(process, item = this.admin) {
       if (process === "add") {
+        this.addMedia();
+        this.addColor();
+        this.addColorMedia(0);
         this.$nextTick(() => {
           this.$refs.obs.reset();
         });
         this.edit = false;
-      } else {
+      }
+      else {
         this.edit = true;
         this.$nextTick(() => {
           this.$refs.obs.validate();
@@ -705,7 +764,7 @@ export default {
       this.dialog = !this.dialog;
       this.admin.id = item.id;
       this.admin.name = item.name;
-      this.admin.name_ar = item.name_ar;
+      this.admin.name_ar = item.name;
       this.admin.desc = item.desc;
       this.admin.stock = item.stock;
       this.admin.user_price_of_piece = item.user_price_of_piece;
@@ -715,9 +774,17 @@ export default {
       this.admin.library_price_of_packet = item.library_price_of_packet;
       this.admin.offer = item.offer;
       this.admin.image = item.image;
-      this.admin.category_id = item.category_id;
+      this.admin.category_id = item.category.id;
       this.admin.media = item.media;
-      this.admin.colors = item.colors;
+      if (item.colors && item.colors.length > 0) {
+        for (var i = 0; i < item.colors.length; i++) {
+          this.addColor(item.colors[ i ]);
+          
+          if (item.colors[i].media && item.colors[i].media.length > 0) {
+            this.addColorMedia(i, item.colors[i].media);
+          }
+        }
+      }
     },
     saveItem() {
       this.connecting = true;
@@ -903,14 +970,23 @@ export default {
         this.showMediaError = true;
       }
     },
-    addColor: function () {
-      this.admin.colors.push(
-        {
-          stock: null,
+    addColor: function (item) {
+      if (!item) {
+        this.admin.colors.push({
           color_id: null,
-          media: null
-        }
-      );
+          stock: null,
+          media: []
+        });
+      }
+      else {
+        this.admin.colors.push(
+          {
+            color_id: item.id,
+            stock: item.stock,
+            media: item.media
+          }
+        );
+      }
       this.showColorError = false;
     },
     deleteColor: function (index) {
@@ -921,6 +997,18 @@ export default {
       else {
         this.showColorError = false;
       }
+    },
+    addColorMedia: function (index, item) {
+      if (!item) {
+        this.admin.colors[index].media.push({ value: '' });
+      }
+      else {
+        this.admin.colors[index].media.push({ value: item });
+      }
+      this.showColorError = false;
+    },
+    deleteColorMedia: function (colorIndex, mediaIndex) {
+      this.admin.colors[colorIndex].media.splice(mediaIndex, 1);
     },
   },
 };
@@ -953,5 +1041,8 @@ export default {
 }
 .text-warning {
   color: goldenrod;
+}
+.ml10 {
+  margin-left: 10px;
 }
 </style>

@@ -403,6 +403,7 @@ export default {
       this.admin.id = item.id;
       this.admin.name = item.name;
       this.admin.name_ar = item.name_ar;
+      this.admin.city_id = item.city_id;
       this.admin.cost = item.cost;
     },
     saveItem() {
