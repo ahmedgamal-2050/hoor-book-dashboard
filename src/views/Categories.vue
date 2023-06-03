@@ -60,30 +60,29 @@
                   
                   <VFileInputWithValidation
                     label="الصورة"
-                    variant="filled"
                     prepend-icon="camera"
                     rules="required"
                     v-model="admin.image"
                   />
                   <div>
-                    <v-avatar dark v-bind="attrs" v-on="on">
-                      <span v-if="admin.image === null || admin.image === ''">لا يوجد صورة</span>
-                      <div v-else-if="typeof admin.image === 'object'"></div>
+                    <span v-if="admin.image === null || admin.image === ''">لا يوجد صورة</span>
+                    <div v-else-if="typeof admin.image === 'object'"></div>
 
-                      <a v-else :href="`${baseUrl}/${admin.image}`" target="_blank">
-                        <img
-                          :src="`${baseUrl}/${admin.image}`"
-                          alt="صورة المنتج"
-                        />
-                      </a>
-                    </v-avatar>
+                    <a v-else :href="`${baseUrl}/${admin.image}`" target="_blank">
+                      <img
+                        :src="`${baseUrl}/${admin.image}`"
+                        alt="صورة المنتج"
+                      />
+                    </a>
                   </div>
 
-                  <VTextFieldWithValidation
+                  <VSelectWithValidation
                     v-model="admin.parent_id"
                     label="أصل #"
+                    :items="category_ids"
+                    item-text="name"
+                    item-value="id"
                     prepend-icon="mail"
-                    type="text"
                   />
                 </v-card-text>
 
@@ -265,6 +264,7 @@
 const headerConst = { align: "center", sortable: false };
 import VTextFieldWithValidation from "../components/inputs/VTextFieldWithValidation";
 import VFileInputWithValidation from "../components/inputs/VFileInputWithValidation";
+import VSelectWithValidation from "../components/inputs/VSelectWithValidation";
 import { mapActions } from "vuex";
 import { BASE_URL } from "../config/config";
 
@@ -284,13 +284,14 @@ export default {
       name: "",
       name_ar: "",
       image: "",
-      parent_id: ""
+      parent_id: null
     },
     connecting: false,
     errors: [],
     edit: false,
     dialog: false,
     requests: [],
+    category_ids: [],
     totalRequests: 0,
     pagination: {},
     loading: false,
@@ -319,7 +320,8 @@ export default {
   }),
   components: {
     VTextFieldWithValidation,
-    VFileInputWithValidation
+    VFileInputWithValidation,
+    VSelectWithValidation
   },
   computed: {
     formTitle() {
@@ -345,6 +347,7 @@ export default {
   created() {
     if (this.loading) return;
     this.fetch();
+    this.getCategoriesId();
   },
   methods: {
     ...mapActions(["showNotification"]),
@@ -386,6 +389,24 @@ export default {
         }
       });
     },
+    getCategoriesId(res = null) {
+      this.loading = true;
+      return new Promise(() => {
+        if (res == null) {
+          let endpoint = `http://143.110.170.3/api/admin/categories?noPaginate=1`;
+
+          this.$http.get(endpoint).then((res) => {
+            let items = res.data.map((item) => {
+              return {
+                id: item.id,
+                name: item.name_ar
+              };
+            });
+            this.category_ids = items;
+          });
+        }
+      });
+    },
     close() {
       this.errors = [];
       this.dialog = false;
@@ -395,7 +416,6 @@ export default {
         image: "",
         parent_id: null
       };
-      this.productDiscription = "";
     },
     editing(process, item = this.admin) {
       if (process === "add") {
@@ -429,7 +449,7 @@ export default {
         this.$http
           .post(endpoint, formdata)
           .then((res) => {
-            if (!res.data.status.status) {
+            if (res && res.data && res.data.status && !res.data.status.status) {
               this.showNotification(res.data.status.validation_message);
             }
             else {
@@ -470,7 +490,7 @@ export default {
                 name: "",
                 name_ar: "",
                 image: "",
-                parent_id: "",
+                parent_id: null,
               };
             }
           })
