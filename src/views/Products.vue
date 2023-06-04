@@ -368,6 +368,15 @@
             <v-card-text class="text-xs-center">
               {{ productDiscription }}
             </v-card-text>
+            <hr/>
+            <v-card-text v-if="reviews && reviews.length > 0">
+              <div v-for="review in reviews">
+                <h3 class="fbold mt-3">{{ review.user.name }}</h3>
+                <div><span class="text-warning">{{ review.review }}</span>/5</div>
+                <div class="mt-3 mb-3">"{{ review.comment }}"</div>
+                <hr/>
+              </div>
+            </v-card-text>
             <v-card-actions>
               <v-btn @click="close" color="primary">إغلاق</v-btn>
             </v-card-actions>
@@ -485,10 +494,7 @@
           <v-chip v-else small color="secondary" dark>غير متوفر</v-chip>
         </template>
 
-        <template v-slot:[`item.user_favourite`]="{ item }">
-          <div v-if="item.user_favourite != null">
-            <b>التفضيلات: </b> {{ item.user_favourite }}
-          </div>
+        <template v-slot:[`item.reviews_avg`]="{ item }">
           <div v-if="item.reviews_avg != null">
             <b>متوسط التقييمات: </b> {{ item.reviews_avg }}
           </div>
@@ -514,7 +520,7 @@
                 x-small
                 v-bind="attrs"
                 v-on="on"
-                @click="viewDescription(item.desc)"
+                @click="viewDescription(item)"
               >
                 <v-icon>verified_user</v-icon>
               </v-btn>
@@ -623,6 +629,7 @@ export default {
       colors: []
     },
     productDiscription: "",
+    reviews: [],
     viewDescriptionDialog: false,
     connecting: false,
     errors: [],
@@ -643,7 +650,7 @@ export default {
       { text: "الوسائط", value: "media", ...headerConst },
       { text: "الدستة", value: "packet_pieces", ...headerConst },
       { text: "القطعة", value: "user_price_of_piece", ...headerConst },
-      { text: "معلومات اضافية", value: "user_favourite", ...headerConst },
+      { text: "معلومات اضافية", value: "reviews_avg", ...headerConst },
       { text: "عمليات", value: "actions", ...headerConst },
     ],
     editedItem: null,
@@ -746,6 +753,7 @@ export default {
         colors: []
       };
       this.productDiscription = "";
+      this.reviews = [];
     },
     editing(process, item = this.admin) {
       if (process === "add") {
@@ -917,9 +925,10 @@ export default {
         });
       }
     },
-    viewDescription(description) {
+    viewDescription(item) {
       this.viewDescriptionDialog = !this.viewDescriptionDialog;
-      this.productDiscription = description;
+      this.productDiscription = item.desc;
+      this.reviews = item.reviews
     },
     getCategoriesId(res = null) {
       this.loading = true;
@@ -1048,8 +1057,13 @@ export default {
 .ml-2 {
   margin-left: 0.5rem;
 }
-
 .mt-3 {
   margin-top: 1rem;
+}
+.mb-3 {
+  margin-bottom: 1rem;
+}
+.fbold {
+  font-weight: bold;
 }
 </style>
