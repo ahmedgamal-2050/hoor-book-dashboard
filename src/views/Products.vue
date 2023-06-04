@@ -598,7 +598,7 @@ import VTextFieldWithValidation from "../components/inputs/VTextFieldWithValidat
 import VFileInputWithValidation from "../components/inputs/VFileInputWithValidation";
 import VSelectWithValidation from "../components/inputs/VSelectWithValidation";
 import { mapActions } from "vuex";
-import { BASE_URL } from "../config/config";
+import { BASE_URL, BASE_API } from "../config/config";
 
 export default {
   props: {
@@ -661,10 +661,11 @@ export default {
     page: 1,
     pages: 0,
     index: null,
-    baseUrl: BASE_URL,
     showMediaError: false,
     showColorError: false,
     showColorMediaError: false,
+    baseUrl: BASE_URL,
+    baseApi: BASE_API,
   }),
   components: {
     VTextFieldWithValidation,
@@ -711,7 +712,7 @@ export default {
       this.loading = true;
       return new Promise((resolve) => {
         if (res == null) {
-          let endpoint = `http://143.110.170.3/api/admin/products?page=${this.page}`;
+          let endpoint = `${this.baseApi}/api/admin/products?page=${this.page}`;
 
           this.$http.get(endpoint).then((res) => {
             let items = res.data.data;
@@ -828,7 +829,7 @@ export default {
       }
 
       if (this.edit) {
-        let endpoint = `http://143.110.170.3/api/admin/products/${this.admin.id}`;
+        let endpoint = `${this.baseApi}/api/admin/products/${this.admin.id}`;
         this.$http
           .put(endpoint, {
             name: this.admin.name,
@@ -877,7 +878,7 @@ export default {
       }
       else {
         this.$http
-          .post(`http://143.110.170.3/api/admin/products`, formdata)
+          .post(`${this.baseApi}/api/admin/products`, formdata)
           .then((res) => {
             if (res && res.data && res.data.status && !res.data.status.status) { 
               this.showNotification(res.data.status.validation_message);
@@ -917,7 +918,7 @@ export default {
     deleteItem(item) {
       // const index = this.requests.indexOf(item);
       if (confirm("هل تود حذف هذا العنصر ؟")) {
-        this.$http.delete(`http://143.110.170.3/api/admin/products/${item.id}`).then((res) => {
+        this.$http.delete(`${this.baseApi}/api/admin/products/${item.id}`).then((res) => {
           this.showNotification("تمت العملية بنجاح");
           this.fetch();
           this.alert.message = "Delete user done";
@@ -934,7 +935,7 @@ export default {
       this.loading = true;
       return new Promise(() => {
         if (res == null) {
-          let endpoint = `http://143.110.170.3/api/admin/categories?noPaginate=1`;
+          let endpoint = `${this.baseApi}/api/admin/categories?noPaginate=1`;
 
           this.$http.get(endpoint).then((res) => {
             let items = res.data.map((item) => {
@@ -952,7 +953,7 @@ export default {
       this.loading = true;
       return new Promise(() => {
         if (res == null) {
-          let endpoint = `http://143.110.170.3/api/admin/colors?noPaginate=1`;
+          let endpoint = `${this.baseApi}/api/admin/colors?noPaginate=1`;
 
           this.$http.get(endpoint).then((res) => {
             let items = res.data.map((item) => {

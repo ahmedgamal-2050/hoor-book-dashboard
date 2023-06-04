@@ -219,6 +219,7 @@ const headerConst = { align: "center", sortable: false };
 import VTextFieldWithValidation from "../components/inputs/VTextFieldWithValidation";
 import VSelectWithValidation from "../components/inputs/VSelectWithValidation";
 import { mapActions } from "vuex";
+import { BASE_URL, BASE_API } from "../config/config";
 
 export default {
   props: {
@@ -263,6 +264,8 @@ export default {
     page: 1,
     pages: 0,
     index: null,
+    baseUrl: BASE_URL,
+    baseApi: BASE_API,
   }),
   components: {
     VTextFieldWithValidation,
@@ -328,7 +331,7 @@ export default {
           });
         }
         else {
-          let endpoint = `http://143.110.170.3/api/admin/cities?page=${this.page}`;
+          let endpoint = `${this.baseApi}/api/admin/cities?page=${this.page}`;
 
           this.$http.get(endpoint).then((res) => {
             let items = res.data.data;
@@ -352,7 +355,7 @@ export default {
       this.loading = true;
       return new Promise(() => {
         if (res == null) {
-          let endpoint = `http://143.110.170.3/api/admin/governorates?noPaginate=1`;
+          let endpoint = `${this.baseApi}/api/admin/governorates?noPaginate=1`;
 
           this.$http.get(endpoint).then((res) => {
             let items = res.data.map((item) => {
@@ -401,7 +404,7 @@ export default {
       if (this.admin.governorate_id) formdata.append("governorate_id", this.admin.governorate_id);
 
       if (this.edit) {
-        let endpoint = `http://143.110.170.3/api/admin/cities/${this.admin.id}`;
+        let endpoint = `${this.baseApi}/api/admin/cities/${this.admin.id}`;
         this.$http
           .put(endpoint, {
             name: this.admin.name,
@@ -432,7 +435,7 @@ export default {
           });
       } else {
         this.$http
-          .post(`http://143.110.170.3/api/admin/cities`, formdata)
+          .post(`${this.baseApi}/api/admin/cities`, formdata)
           .then((res) => {
             if (res.data.status.status) {
               this.showNotification("تمت العملية بنجاح");
@@ -460,7 +463,7 @@ export default {
     },
     deleteItem(item) {
       if (confirm("هل تود حذف هذا العنصر ؟")) {
-        this.$http.delete(`http://143.110.170.3/api/admin/cities/${item.id}`).then((res) => {
+        this.$http.delete(`${this.baseApi}/api/admin/cities/${item.id}`).then((res) => {
           this.showNotification("تمت العملية بنجاح");
           this.fetch();
           this.alert.message = "Delete city done";

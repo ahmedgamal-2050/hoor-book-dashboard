@@ -266,7 +266,7 @@ import VTextFieldWithValidation from "../components/inputs/VTextFieldWithValidat
 import VFileInputWithValidation from "../components/inputs/VFileInputWithValidation";
 import VSelectWithValidation from "../components/inputs/VSelectWithValidation";
 import { mapActions } from "vuex";
-import { BASE_URL } from "../config/config";
+import { BASE_URL, BASE_API } from "../config/config";
 
 export default {
   props: {
@@ -317,6 +317,7 @@ export default {
     index: null,
     file: null,
     baseUrl: BASE_URL,
+    baseApi: BASE_API,
   }),
   components: {
     VTextFieldWithValidation,
@@ -369,7 +370,7 @@ export default {
       this.loading = true;
       return new Promise((resolve) => {
         if (res == null) {
-          let endpoint = `http://143.110.170.3/api/admin/categories?page=${this.page}`;
+          let endpoint = `${this.baseApi}/api/admin/categories?page=${this.page}`;
 
           this.$http.get(endpoint).then((res) => {
             let items = res.data.data;
@@ -393,7 +394,7 @@ export default {
       this.loading = true;
       return new Promise(() => {
         if (res == null) {
-          let endpoint = `http://143.110.170.3/api/admin/categories?noPaginate=1`;
+          let endpoint = `${this.baseApi}/api/admin/categories?noPaginate=1`;
 
           this.$http.get(endpoint).then((res) => {
             let items = res.data.map((item) => {
@@ -445,7 +446,7 @@ export default {
       if (this.admin.parent_id) formdata.append("parent_id", this.admin.parent_id);
 
       if (this.edit) {
-        let endpoint = `http://143.110.170.3/api/admin/categories/${this.admin.id}`;
+        let endpoint = `${this.baseApi}/api/admin/categories/${this.admin.id}`;
         this.$http
           .post(endpoint, formdata)
           .then((res) => {
@@ -473,7 +474,7 @@ export default {
           });
       } else {
         this.$http
-          .post(`http://143.110.170.3/api/admin/categories`, formdata)
+          .post(`${this.baseApi}/api/admin/categories`, formdata)
           .then((res) => {
             if (!res.data.status.status) {
               this.showNotification(res.data.status.validation_message);
@@ -502,7 +503,7 @@ export default {
     },
     deleteItem(item) {
       if (confirm("هل تود حذف هذا العنصر ؟")) {
-        this.$http.delete(`http://143.110.170.3/api/admin/categories/${item.id}`).then((res) => {
+        this.$http.delete(`${this.baseApi}/api/admin/categories/${item.id}`).then((res) => {
           this.showNotification("تمت العملية بنجاح");
           this.fetch();
           this.alert.message = "Delete category done";

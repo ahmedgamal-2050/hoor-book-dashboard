@@ -477,6 +477,8 @@ const headerConst = {
   sortable: false,
 };
 import { mapActions } from "vuex";
+import { BASE_URL, BASE_API } from "../config/config";
+
 export default {
   props: {
     title: {
@@ -552,6 +554,8 @@ export default {
     index: null,
     filterCategory: null,
     categories: [],
+    baseUrl: BASE_URL,
+    baseApi: BASE_API,
   }),
   computed: {},
   watch: {
@@ -569,22 +573,6 @@ export default {
       this.pagination.page = val;
       this.fetch();
     },
-    // pagination: {
-    //   handler: function(after, before) {
-    //     console.log(
-    //       "detect pagination obj changed => ",
-    //       _.isEqual(before, after)
-    //     );
-
-    //     console.log("before => ", before);
-    //     console.log("after => ", after);
-    //     if (!_.isEqual(after, before)) {
-    //       this.pages = Math.ceil(after.totalItems / after.rowsPerPage);
-    //       console.log("after.totalItems", after.totalItems);
-    //     }
-    //   },
-    //   deep: true,
-    // },
   },
   created() {
     if (this.loading) return;

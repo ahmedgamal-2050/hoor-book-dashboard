@@ -432,6 +432,7 @@
 const headerConst = { align: "center", sortable: false };
 import VTextFieldWithValidation from "../components/inputs/VTextFieldWithValidation";
 import { mapActions } from "vuex";
+import { BASE_URL, BASE_API } from "../config/config";
 
 export default {
   props: {
@@ -480,6 +481,8 @@ export default {
     page: 1,
     pages: 0,
     index: null,
+    baseUrl: BASE_URL,
+    baseApi: BASE_API,
   }),
   components: {
     VTextFieldWithValidation,

@@ -205,6 +205,7 @@
 const headerConst = { align: "center", sortable: false };
 import VTextFieldWithValidation from "../components/inputs/VTextFieldWithValidation";
 import { mapActions } from "vuex";
+import { BASE_URL, BASE_API } from "../config/config";
 
 export default {
   props: {
@@ -247,6 +248,8 @@ export default {
     page: 1,
     pages: 0,
     index: null,
+    baseUrl: BASE_URL,
+    baseApi: BASE_API,
   }),
   components: {
     VTextFieldWithValidation,
@@ -289,7 +292,7 @@ export default {
       this.loading = true;
       return new Promise((resolve) => {
         if (res == null) {
-          let endpoint = `http://143.110.170.3/api/admin/shipping-companies?page=${this.page}`;
+          let endpoint = `${this.baseApi}/api/admin/shipping-companies?page=${this.page}`;
 
           this.$http.get(endpoint).then((res) => {
             let items = res.data.data;
@@ -343,7 +346,7 @@ export default {
 
       if (this.edit) {
         let endpoint = "";
-        endpoint = `http://143.110.170.3/api/admin/shipping-companies/${this.admin.id}`;
+        endpoint = `${this.baseApi}/api/admin/shipping-companies/${this.admin.id}`;
         this.$http
           .put(endpoint, { name: this.admin.name, name_ar: this.admin.name_ar })
           .then((res) => {
@@ -364,7 +367,7 @@ export default {
           });
       } else {
         this.$http
-          .post(`http://143.110.170.3/api/admin/shipping-companies`, formdata)
+          .post(`${this.baseApi}/api/admin/shipping-companies`, formdata)
           .then((res) => {
             this.showNotification("تمت العملية بنجاح");
             this.fetch();
@@ -387,7 +390,7 @@ export default {
     deleteItem(item) {
       // const index = this.requests.indexOf(item);
       if (confirm("هل تود حذف هذا العنصر ؟")) {
-        this.$http.delete(`http://143.110.170.3/api/admin/shipping-companies/${item.id}`).then((res) => {
+        this.$http.delete(`${this.baseApi}/api/admin/shipping-companies/${item.id}`).then((res) => {
           this.showNotification("تمت العملية بنجاح");
           this.fetch();
           this.alert.message = "Delete user done";
