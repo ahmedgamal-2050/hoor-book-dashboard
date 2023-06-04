@@ -78,7 +78,7 @@
 
                   <VSelectWithValidation
                     v-model="admin.parent_id"
-                    label="أصل #"
+                    label="الفئة التابعة"
                     :items="category_ids"
                     item-text="name"
                     item-value="id"
@@ -298,7 +298,7 @@ export default {
     
     headers: [
       { text: "#", value: "id", ...headerConst },
-      { text: "أصل #", value: "parent_id", ...headerConst },
+      { text: "الفئة التابعة", value: "parent_id", ...headerConst },
       { text: "الصورة", value: "image", ...headerConst },
       { text: "الاسم", value: "name", ...headerConst },
       { text: "الاسم بالعربية", value: "name_ar", ...headerConst },
