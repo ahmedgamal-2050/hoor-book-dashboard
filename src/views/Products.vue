@@ -371,9 +371,9 @@
             <hr/>
             <v-card-text v-if="reviews && reviews.length > 0">
               <div v-for="review in reviews">
-                <h3 class="fbold mt-3">{{ review.user.name }}</h3>
-                <div><span class="text-warning">{{ review.review }}</span>/5</div>
-                <div class="mt-3 mb-3">"{{ review.comment }}"</div>
+                <h3 class="mt-3">{{ review.user.name }}</h3>
+                <div><span class="fbold">التقييم: </span><span class="text-warning">{{ review.review }}</span>/5</div>
+                <div class="mt-3 mb-3"><span class="fbold">التعليق: </span> "{{ review.comment }}"</div>
                 <hr/>
               </div>
             </v-card-text>
@@ -1064,6 +1064,6 @@ export default {
   margin-bottom: 1rem;
 }
 .fbold {
-  font-weight: bold;
+  font-weight: 700 !important; 
 }
 </style>
