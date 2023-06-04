@@ -202,7 +202,7 @@
 const headerConst = { align: "center", sortable: false };
 import VSelectWithValidation from "../components/inputs/VSelectWithValidation";
 import { mapActions } from "vuex";
-import { BASE_URL, BASE_API } from "../config/config";
+import { BASE_API } from "../config/config";
 
 export default {
   props: {

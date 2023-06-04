@@ -477,7 +477,7 @@ const headerConst = {
   sortable: false,
 };
 import { mapActions } from "vuex";
-import { BASE_URL, BASE_API } from "../config/config";
+import { BASE_API } from "../config/config";
 
 export default {
   props: {
