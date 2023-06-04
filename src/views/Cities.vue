@@ -57,7 +57,7 @@
                   />
                   
                   <VSelectWithValidation
-                    label="كود المحافظة"
+                    label="المحافظة"
                     rules="required"
                     :items="governorate_ids"
                     item-text="name"

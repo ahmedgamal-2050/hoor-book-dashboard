@@ -57,7 +57,7 @@
                   />
 
                   <VSelectWithValidation
-                    label="كود المدينة"
+                    label="المدينة"
                     rules="required"
                     :items="cities_ids"
                     item-text="name"

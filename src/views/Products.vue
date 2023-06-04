@@ -467,20 +467,20 @@
             <b>العدد: </b> {{ item.packet_pieces }}
           </div>
           <div v-if="item.user_price_of_packet != null">
-            <b>السعر: </b> {{ item.user_price_of_packet }}
+            <b>سعر الدستة بالنسبة للمستخدم: </b> {{ item.user_price_of_packet }}
           </div>
           <div v-if="item.library_price_of_packet != null">
-            <b>السعر قبل الخصم: </b> {{ item.library_price_of_packet }}
+            <b>سعر الدستة بالنسبة للمكتبة: </b> {{ item.library_price_of_packet }}
           </div>
           <v-chip v-else small color="secondary" dark>غير متوفر</v-chip>
         </template>
 
         <template v-slot:[`item.user_price_of_piece`]="{ item }">
           <div v-if="item.user_price_of_piece != null">
-            <b>السعر: </b> {{ item.user_price_of_piece }}
+            <b>سعر القطعة بالنسبة للمستخدم: </b> {{ item.user_price_of_piece }}
           </div>
           <div v-if="item.library_price_of_piece != null">
-            <b>السعر قبل الخصم: </b> {{ item.library_price_of_piece }}
+            <b>سعر القطعة بالنسبة للمكتبة: </b> {{ item.library_price_of_piece }}
           </div>
           <v-chip v-else small color="secondary" dark>غير متوفر</v-chip>
         </template>
@@ -641,7 +641,7 @@ export default {
       { text: "الفئة", value: "category", ...headerConst },
       { text: "الألوان", value: "colors", ...headerConst },
       { text: "الوسائط", value: "media", ...headerConst },
-      { text: "الرزم", value: "packet_pieces", ...headerConst },
+      { text: "الدستة", value: "packet_pieces", ...headerConst },
       { text: "القطعة", value: "user_price_of_piece", ...headerConst },
       { text: "معلومات اضافية", value: "user_favourite", ...headerConst },
       { text: "عمليات", value: "actions", ...headerConst },

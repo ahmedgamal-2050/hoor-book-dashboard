@@ -2,17 +2,8 @@
   <!--  -->
   <v-menu bottom origin="center center" transition="scale-transition">
     <template v-slot:activator="{ on, attrs }">
-      <v-avatar dark v-bind="attrs" v-on="on">
-        <img
-          v-if="admin.image === null"
-          src="../../../assets/imgs/profile-img.jpg"
-          alt="صورة البروفايل"
-        />
-        <img
-          v-else
-          :src="`https://api.letasknoelayha.com/${admin.image}`"
-          alt="صورة البروفايل"
-        />
+      <v-avatar class="no-brs" v-bind="attrs" v-on="on">
+        <img src="../../../assets/hb-logo.svg" width="36px" />
       </v-avatar>
     </template>
     <v-card>
@@ -37,22 +28,9 @@
                   offsetY
                   transition="scale-transition"
                 >
-                  <template v-slot:activator="{ on, attrs }">
-                    <img
-                      v-if="admin.image === null"
-                      v-bind="attrs"
-                      v-on="on"
-                      src="../../../assets/imgs/profile-img.jpg"
-                      alt="صورة البروفايل"
-                    />
-                    <img
-                      v-else
-                      v-bind="attrs"
-                      v-on="on"
-                      :src="`https://api.letasknoelayha.com/${admin.image}`"
-                      alt="صورة البروفايل"
-                    />
-                  </template>
+                <router-link :to="{ name: 'Home' }">
+                  <img src="../../../assets/hb-logo.svg" width="36px" />
+                </router-link>
                   <!--  -->
                   <v-card>
                     <v-list>
@@ -189,12 +167,9 @@
               <v-container>
                 <v-row>
                   <v-col cols="12">
-                    <v-img
-                      :src="`https://api.letasknoelayha.com/${admin.image}`"
-                      alt="صورة البروفايل"
-                      aspect-ratio="1.7"
-                      contain
-                    ></v-img>
+                    <router-link :to="{ name: 'Home' }">
+                      <img src="../../../assets/hb-logo.svg" width="36px" />
+                    </router-link>
                   </v-col>
                 </v-row>
               </v-container>
@@ -503,4 +478,8 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.no-brs {
+  border-radius: 0 !important;
+}
+</style>
