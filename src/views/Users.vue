@@ -554,7 +554,7 @@ export default {
     index: null,
     filterCategory: null,
     categories: [],
-    baseUrl: BASE_URL,
+    baseUrl: window.location.origin,
     baseApi: BASE_API,
   }),
   computed: {},

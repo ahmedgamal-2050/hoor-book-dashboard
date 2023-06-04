@@ -85,7 +85,7 @@ export default {
     password_show: false,
     errors: [],
     connecting: false,
-    baseUrl: BASE_URL,
+    baseUrl: window.location.origin,
     baseApi: BASE_API,
   }),
   components: {

@@ -282,7 +282,7 @@ export default {
     page: 1,
     pages: 0,
     index: null,
-    baseUrl: BASE_URL,
+    baseUrl: window.location.origin,
     baseApi: BASE_API,
   }),
   components: {

@@ -316,7 +316,7 @@ export default {
     pages: 0,
     index: null,
     file: null,
-    baseUrl: BASE_URL,
+    baseUrl: window.location.origin,
     baseApi: BASE_API,
   }),
   components: {

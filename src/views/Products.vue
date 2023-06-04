@@ -664,7 +664,7 @@ export default {
     showMediaError: false,
     showColorError: false,
     showColorMediaError: false,
-    baseUrl: BASE_URL,
+    baseUrl: window.location.origin,
     baseApi: BASE_API,
   }),
   components: {

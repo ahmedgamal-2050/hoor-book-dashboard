@@ -5,7 +5,7 @@ import { cacheAdapterEnhancer } from "axios-extensions";
 import { BASE_URL } from "../config/config";
 
 const http = axios.create({
-    baseURL: BASE_URL,
+    baseUrl: window.location.origin,
     headers: {
         "Cache-Control": "no-cache",
         Accept: "application/json"
