@@ -155,9 +155,9 @@
               src="../assets/imgs/profile-img.jpg"
               alt="صورة المنتج"
             />
-            <a v-else :href="`${baseUrl}/${item.image}`" target="_blank">
+            <a v-else :href="`${baseApi}/${item.image}`" target="_blank">
               <img
-                :src="`${baseUrl}/${item.image}`"
+                :src="`${baseApi}/${item.image}`"
                 alt="صورة المنتج"
               />
             </a>

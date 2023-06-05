@@ -97,7 +97,7 @@ export default {
       // var self = this;
       this.connecting = true;
       this.$http
-        .post("${this.baseApi}/api/admin/login", this.user)
+        .post(`${this.baseApi}/api/admin/login`, this.user)
         .then((res) => {
           // console.log("RES => ", res.data);
           // console.log("access_token => ", res.data.data.access_token);

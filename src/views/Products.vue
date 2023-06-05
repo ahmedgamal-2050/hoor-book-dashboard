@@ -76,7 +76,7 @@
 
                   <VTextFieldWithValidation
                     rules="required"
-                    label="سعر القطعة"
+                    label=" سعر  القطعة للمستخدم"
                     v-model="admin.user_price_of_piece"
                     prepend-icon="lock"
                     type="number"
@@ -84,7 +84,7 @@
 
                   <VTextFieldWithValidation
                     rules="required"
-                    label="سعر القطعة قبل الخصم"
+                    label="سعر القطعة للمكتبة"
                     v-model="admin.library_price_of_piece"
                     prepend-icon="lock"
                     type="number"
@@ -100,7 +100,7 @@
 
                   <VTextFieldWithValidation
                     rules="required"
-                    label="سعر الرزمة"
+                    label="سعر الرزمة للمستخدم"
                     v-model="admin.user_price_of_packet"
                     prepend-icon="lock"
                     type="number"
@@ -108,7 +108,7 @@
 
                   <VTextFieldWithValidation
                     rules="required"
-                    label="سعر الرزمة قبل الخصم"
+                    label="سعر الرزمة للمكتبة"
                     v-model="admin.library_price_of_packet"
                     prepend-icon="lock"
                     type="number"
@@ -431,9 +431,9 @@
               src="../assets/imgs/profile-img.jpg"
               alt="صورة المنتج"
             />
-            <a v-else :href="`${baseUrl}/${item.image}`" target="_blank">
+            <a v-else :href="`${baseApi}/${item.image}`" target="_blank">
               <img
-                :src="`${baseUrl}/${item.image}`"
+                :src="`${baseApi}/${item.image}`"
                 alt="صورة المنتج"
               />
             </a>
