@@ -69,8 +69,8 @@
                     <div v-else-if="typeof admin.image === 'object'"></div>
 
                     <a v-else :href="`${baseUrl}/${admin.image}`" target="_blank">
-                      <img
-                        :src="`${baseUrl}/${admin.image}`"
+                      <img class="of-cover"
+                        :src="`${baseApi}/${admin.image}`"
                         alt="صورة المنتج"
                       />
                     </a>
@@ -156,7 +156,7 @@
               alt="صورة المنتج"
             />
             <a v-else :href="`${baseApi}/${item.image}`" target="_blank">
-              <img
+              <img class="of-cover"
                 :src="`${baseApi}/${item.image}`"
                 alt="صورة المنتج"
               />
@@ -541,5 +541,12 @@ export default {
 .v-data-table > .v-data-table__wrapper > table > tfoot > tr > td,
 .v-data-table > .v-data-table__wrapper > table > thead > tr > td {
   height: 80px !important;
+}
+.of-cover {
+  object-fit: cover;
+  -o-object-fit: cover;
+  width: 100%;
+  height: 48px;
+  margin-top: 8px;
 }
 </style>

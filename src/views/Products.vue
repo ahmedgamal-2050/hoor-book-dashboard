@@ -433,6 +433,7 @@
             />
             <a v-else :href="`${baseApi}/${item.image}`" target="_blank">
               <img
+                class="of-cover"
                 :src="`${baseApi}/${item.image}`"
                 alt="صورة المنتج"
               />
@@ -452,7 +453,7 @@
             <div>
               <a :href="`${baseUrl}/${item.category.image}`" target="_blank">
                 <img
-                  :src="`${baseUrl}/${item.category.image}`"
+                  :src="`${baseUrl}/${item.category.image}`" class="of-cover"
                   alt="صورة الفئة"
                 />
               </a>
@@ -789,7 +790,7 @@ export default {
       if (item.colors && item.colors.length > 0) {
         for (var i = 0; i < item.colors.length; i++) {
           this.addColor(item.colors[i]);
-          console.log('color media >>', item.colors[i].media);
+          //console.log('color media >>', item.colors[i].media);
           if (item.colors[i].media && item.colors[i].media.length > 0) {
             this.addColorMedia(i, item.colors[i].media);
           }
@@ -819,9 +820,6 @@ export default {
       }
       if (this.admin.colors && this.admin.colors.length > 0) {
         for (var i = 0; i < this.admin.colors.length; i++) {
-          // console.log('add color color_id >>', this.admin.colors[i].color_id)
-          // console.log('add color stock >>', this.admin.colors[i].stock)
-          // console.log('add color media >>', this.admin.colors[i].media)
           formdata.append(`colors.${i}.color_id`, this.admin.colors[i].color_id);
           formdata.append(`colors.${i}.stock`, this.admin.colors[i].stock);
           if (this.admin.colors[i].media) formdata.append(`colors.${i}.media`, this.admin.colors[i].media);
@@ -831,7 +829,7 @@ export default {
       if (this.edit) {
         let endpoint = `${this.baseApi}/api/admin/products/${this.admin.id}`;
         this.$http
-          .put(endpoint, {
+          .post(endpoint, {
             name: this.admin.name,
             name_ar: this.admin.name_ar,
             desc: this.admin.desc,
@@ -841,11 +839,11 @@ export default {
             packet_pieces: this.admin.packet_pieces,
             user_price_of_packet: this.admin.user_price_of_packet,
             library_price_of_packet: this.admin.library_price_of_packet,
-            offer: this.admin.offer,
+            offer: (this.admin.offer) ? this.admin.offer : null,
             image: this.admin.image,
             category_id: this.admin.category_id,
             media: this.admin.media,
-            colors: this.admin.colors,
+            colors: (this.admin.colors && this.admin.colors.length > 0) ? this.admin.colors : null,
           })
           .then((res) => {
             this.showNotification("تمت العملية بنجاح");
@@ -1015,7 +1013,7 @@ export default {
         this.admin.colors[index].media.push({ value: '' });
       }
       else {
-        console.log('color media item >>', item);
+        //console.log('color media item >>', item);
         this.admin.colors[index].media.push({ value: item });
       }
       this.showColorError = false;
@@ -1066,5 +1064,12 @@ export default {
 }
 .fbold {
   font-weight: 700 !important; 
+}
+.of-cover {
+  object-fit: cover;
+  -o-object-fit: cover;
+  width: 100%;
+  height: 48px;
+  margin-top: 8px;
 }
 </style>
