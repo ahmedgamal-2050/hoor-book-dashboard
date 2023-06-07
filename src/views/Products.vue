@@ -1026,12 +1026,6 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.v-data-table > .v-data-table__wrapper > table > tbody > tr > td,
-.v-data-table > .v-data-table__wrapper > table > tfoot > tr > td,
-.v-data-table > .v-data-table__wrapper > table > thead > tr > td {
-  height: 80px !important;
-}
-
 .d-flex {
   display: flex;
 }

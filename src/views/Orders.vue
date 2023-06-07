@@ -98,41 +98,160 @@
         :options.sync="pagination"
       >
       
-      <template v-slot:[`item.id`]="{ item }">
-        <span v-if="item.id != null">{{ item.id }}</span>
-        <v-chip v-else small color="secondary" dark>غير متوفر</v-chip>
-      </template>
-      
-      <template v-slot:[`item.status`]="{ item }">
-        <div v-if="item.status != null">
-          <span>{{ item.status }}</span>
-        </div>
-        <v-chip v-else small color="secondary" dark>غير متوفر</v-chip>
-      </template>
+        <template v-slot:[`item.id`]="{ item }">
+          <span v-if="item.id != null">{{ item.id }}</span>
+          <v-chip v-else small color="secondary" dark>غير متوفر</v-chip>
+        </template>
+        
+        <template v-slot:[`item.status`]="{ item }">
+          <div v-if="item.status != null">
+            <span>{{ item.status }}</span>
+          </div>
+          <v-chip v-else small color="secondary" dark>غير متوفر</v-chip>
+        </template>
 
-      <template v-slot:[`item.shipping_companies_id`]="{ item }">
-        <div v-if="item.shipping_companies_id != null">
-          <span>{{ item.shipping_companies_id }}</span>
-        </div>
-        <v-chip v-else small color="secondary" dark>غير متوفر</v-chip>
-      </template>
+        <template v-slot:[`item.shipping_companies_id`]="{ item }">
+          <div v-if="item.shipping_companies_id != null">
+            <span>{{ item.shipping_companies_id }}</span>
+          </div>
+          <v-chip v-else small color="secondary" dark>غير متوفر</v-chip>
+        </template>
 
-      <template v-slot:[`item.payment_status`]="{ item }">
-        <div v-if="item.payment_status != null">
-          <span>{{ item.payment_status }}</span>
-        </div>
-        <v-chip v-else small color="secondary" dark>غير متوفر</v-chip>
-      </template>
 
-      <template v-slot:[`item.created_at`]="{ item }">
-        <span v-if="item.created_at != null">{{ item.created_at | moment("dddd, MMMM Do YYYY") }}</span>
-        <v-chip v-else small color="secondary" dark>غير متوفر</v-chip>
-      </template>
 
-      <template v-slot:[`item.updated_at`]="{ item }">
-        <span v-if="item.updated_at != null">{{ item.updated_at | moment("dddd, MMMM Do YYYY") }}</span>
-        <v-chip v-else small color="secondary" dark>غير متوفر</v-chip>
-      </template>
+        <template v-slot:[`item.order_meta`]="{ item }">        
+          <!-- 
+          order_meta: [{id: 96, order_id: 66, product_id: 25, color_id: 9, user_id: 6, qty: 1, product_type: "Piece",…}]
+            color: {id: 9, code: "#eed5fa", created_at: "2023-03-03T14:42:29.000000Z",…}
+            color_id
+            created_at
+            id
+            order_id
+            price_after_discount
+            price_before_discount
+            product: {
+              category_id
+              created_at
+              desc
+              id
+              image
+              library_price_of_packet
+              library_price_of_piece
+              name
+              name_ar
+              packet_pieces
+              stock
+              updated_at
+              user_price_of_packet
+              user_price_of_piece
+              product_id
+              product_type
+              qty
+              updated_at
+              user_id
+            }
+          -->
+          <div v-if="item.order_meta != null">
+            <span>{{ item.order_meta.length }}</span>
+          </div>
+          <v-chip v-else small color="secondary" dark>غير متوفر</v-chip>
+        </template>
+
+        <template v-slot:[`item.total`]="{ item }">
+          <div class="py-3">
+            <div v-if="item.payment_type != null">
+              <b>نوع الدفع: </b><span>{{ item.payment_type }}</span>
+            </div>
+            <div v-if="item.payment_status != null">
+              <b>حالة الدفع: </b><span>{{ item.payment_status }}</span>
+            </div>
+            <div v-if="item.paymob_order_id != null">
+              <b># طلب paymob: </b><span>{{ item.paymob_order_id }}</span>
+            </div>
+            <div v-if="item.discount_type != null">
+              <b>نوع الخصم: </b><span>{{ item.discount_type }}</span>
+            </div>
+
+            <div v-if="item.sub_total != null">
+              <b>المجموع الفرعي: </b><span>{{ item.sub_total }}</span>
+            </div>
+            <div v-if="item.discount != null">
+              <b>قيمة الخصم: </b><span>{{ item.discount }}</span>
+            </div>
+            <div v-if="item.delivery_fee != null">
+              <b>رسوم التوصيل: </b><span>{{ item.delivery_fee }}</span>
+            </div>
+            <div v-if="item.total != null">
+              <b>الإجمالي: </b><span>{{ item.total }}</span>
+            </div>
+            <v-chip v-else small color="secondary" dark>غير متوفر</v-chip>
+          </div>
+        </template>
+
+        <template v-slot:[`item.user_address`]="{ item }">
+          <!-- 
+            area: {id: 2, name: "Dokki", name_ar: "الدقي", city_id: 2, created_at: "2023-05-26T17:51:55.000000Z",…}
+            area_id
+            city: {id: 2, name: "city", name_ar: "مدينة", governorate_id: 2, created_at: "2023-05-26T17:30:45.000000Z",…}
+            city_id
+            governorate: {id: 2, name: "Tantaa", name_ar: "طنطاا", created_at: "2023-05-26T13:12:53.000000Z",…}
+            governorate_id
+            latitude
+            longitude
+            phone_verified_at
+          -->
+          <div class="py-3">
+            <div v-if="item.user_address.id != null">
+              <b># العنوان: </b><span>{{ item.user_address.id }}</span>
+            </div>
+            <div v-if="item.user_address.address_details != null">
+              <b>تفاصيل العنوان: </b><span>{{ item.user_address.address_details }}</span>
+            </div>
+            <div v-if="item.user_address.user_id != null">
+              <b># العميل: </b><span>{{ item.user_address.user_id }}</span>
+            </div>
+            <div v-if="item.user_address.full_name != null">
+              <b>إسم العميل: </b><span>{{ item.user_address.full_name }}</span>
+            </div>
+            <div v-if="item.user_address.phone != null">
+              <b>رقم موبايل العميل: </b><span>{{ item.user_address.phone }}</span>
+            </div>
+            <div v-if="item.user_address.verification_code != null">
+              <b>كود التفعيل: </b><span>{{ item.user_address.verification_code }}</span>
+            </div>
+            <v-chip v-else small color="secondary" dark>غير متوفر</v-chip>
+          </div>
+        </template>
+
+        <template v-slot:[`item.notes`]="{ item }">
+          <div class="py-3">
+            <div v-if="item.notes != null">
+              <b>الملاحظات: </b><span>{{ item.notes }}</span>
+            </div>
+            <div v-if="item.Cancel_reason != null">
+              <b>سبب الإلغاء: </b><span>{{ item.Cancel_reason }}</span>
+            </div>
+            <v-chip v-else small color="secondary" dark>غير متوفر</v-chip>
+          </div>
+        </template>
+
+        <template v-slot:[`item.created_at`]="{ item }">
+          <div v-if="item.created_at != null">
+            <b>أنشئت في: </b>
+            <div>
+              {{ item.created_at | moment("dddd, MMMM Do YYYY") }}
+            </div>
+          </div>
+          <v-chip v-else small color="secondary" dark>غير متوفر</v-chip>
+
+          <div v-if="item.updated_at != null">
+            <b>تم التحديث في: </b>
+            <div>
+              {{ item.updated_at | moment("dddd, MMMM Do YYYY") }}
+            </div>
+          </div>
+          <v-chip v-else small color="secondary" dark>غير متوفر</v-chip>
+        </template>
 
         <template v-slot:[`item.actions`]="{ item }">
           <!-- start Add-Edit action -->
@@ -152,24 +271,6 @@
             <span>تعديل</span>
           </v-tooltip>
           <!-- end Add-Edit action -->
-
-          <!-- start delete action -->
-          <!-- <v-tooltip right>
-            <template v-slot:activator="{ on, attrs }">
-              <v-btn
-                color="red"
-                icon
-                x-small
-                v-bind="attrs"
-                v-on="on"
-                @click="deleteItem(item)"
-              >
-                <v-icon>delete_forever</v-icon>
-              </v-btn>
-            </template>
-            <span>حذف</span>
-          </v-tooltip> -->
-          <!-- end delete action -->
         </template>
         
         <template slot="pageText" slot-scope="props">
@@ -233,11 +334,13 @@ export default {
     userFocus: null,
     headers: [
       { text: "#", value: "id", ...headerConst },
-      { text: "الحالة", value: "status", ...headerConst },
+      { text: "حالة الطلب", value: "status", ...headerConst },
+      { text: "معلومات الطلب", value: "order_meta", ...headerConst },
       { text: "شركة الشحن #", value: "shipping_companies_id", ...headerConst },
-      { text: "حالة الدفع", value: "status", ...headerConst },
-      { text: "أنشئت في", value: "created_at", ...headerConst },
-      { text: "تم التحديث في", value: "updated_at", ...headerConst },
+      { text: "معلومات الدفع", value: "total", ...headerConst },
+      { text: "عنوان العميل", value: "user_address", ...headerConst },
+      { text: "الملاحظات", value: "notes", ...headerConst },
+      { text: "تواريخ", value: "created_at", ...headerConst },
       { text: "عمليات", value: "actions", ...headerConst },
     ],
     editedItem: null,
@@ -277,7 +380,7 @@ export default {
     fetch() {
       this.getDataFromApi().then((data) => {
         this.requests = JSON.parse(JSON.stringify(data.items));
-        console.log('getDataFromApi requests >>', data.items);
+        //console.log('getDataFromApi requests >>', data.items);
         let meta = data.meta;
         this.totalRequests = meta.total;
         this.pagination.rowsPerPage = meta.per_page;
@@ -297,7 +400,7 @@ export default {
 
           this.$http.get(endpoint).then((res) => {
             let items = res.data.data;
-            console.log('getDataFromApi items >>', items);
+            //console.log('getDataFromApi items >>', items);
             let meta = res.data;
             this.loading = false;
             resolve({
@@ -307,7 +410,7 @@ export default {
           })
           .catch((error) => {
             if (error.message.includes('code 401')) {
-              console.log('auth error >>');
+              //console.log('auth error >>');
               this.$router.push({ path: '/auth/login' })
             }
           });
@@ -327,7 +430,7 @@ export default {
                 name: item.name_ar
               };
             });
-            console.log('getDataFromApi items >>', items);
+            //console.log('getDataFromApi items >>', items);
             this.shipping_companies_ids = items;
           });
         }
@@ -348,7 +451,8 @@ export default {
           this.$refs.obs.reset();
         });
         this.edit = false;
-      } else {
+      }
+      else {
         this.edit = true;
         this.$nextTick(() => {
           this.$refs.obs.validate();
@@ -432,9 +536,16 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.v-data-table > .v-data-table__wrapper > table > tbody > tr > td,
-.v-data-table > .v-data-table__wrapper > table > tfoot > tr > td,
-.v-data-table > .v-data-table__wrapper > table > thead > tr > td {
-  height: 80px !important;
+.my-2 {
+  margin-block: 0.5rem;
+}
+.my-3 {
+  margin-block: 1rem;
+}
+.py-2 {
+  padding-block: 0.5rem;
+}
+.py-3 {
+  padding-block: 1rem;
 }
 </style>
