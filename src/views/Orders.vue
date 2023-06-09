@@ -43,7 +43,7 @@
                 <v-card-text>
                   
                   <VSelectWithValidation
-                    label="الحالة"
+                    label="حالة الطلب"
                     rules="required"
                     :items="['Pending','Processing','Shipped','Delivered','Cancelled','Refunded']"           
                     prepend-icon="lock"
@@ -51,7 +51,7 @@
                   />
                   
                   <VSelectWithValidation
-                    label="شركات الشحن #"
+                    label="شركات الشحن"
                     rules="required"
                     :items="shipping_companies_ids" 
                     item-text="name"
@@ -84,7 +84,143 @@
           </v-card>
         </v-dialog>
         <!-- End Add/Edit Dialog Form -->
+
+        <!-- Start View Description Dialog Form -->
+        <v-dialog v-model="viewOrderDialog" persistent max-width="600px">
+          <v-card>
+            <v-card-title>
+              <span>معلومات الطلب</span>
+              <v-spacer></v-spacer>
+
+              <v-btn icon small @click="close">
+                <v-icon>close</v-icon>
+              </v-btn>
+            </v-card-title>
+            <v-card-text v-if="order_meta && order_meta.length > 0">
+              <div v-for="order in order_meta">
+                <hr/>
+                <div class="mt-3 mb-3">
+                  <b>تعريف الطلب: </b>
+                  {{ order.order_id }}
+                </div>
+                <div class="mb-3">
+                  <b>تعريف اللون: </b>
+                  {{ order.color.id }}
+                </div>
+                <div class="mb-3">
+                  <b>كود اللون: </b>
+                  {{ order.color.code }}
+                  <span :style="{'background': order.color.code}" style="width: 16px; height: 16px; margin-inline: 5px; display: inline-block; border-radius: 4px;"></span>
+                </div>
+                <div class="mb-3">
+                  <b>السعر المنتج: </b>
+                  <span class="text-decoration-line-through">{{ order.price_before_discount }}</span>
+                  <span class="green--text font-weight-bold mx-2">{{ order.price_after_discount }}</span>
+                </div>
+                <div class="mb-3">
+                  <b>تعريف المنتج: </b>
+                  {{ order.product.id }}
+                </div>
+                <div class="mb-3">
+                  <b>إسم المنتج: </b>
+                  {{ order.product.name }}
+                </div>
+                <div class="mb-3">
+                  <b>إسم المنتج بالعربي: </b>
+                  {{ order.product.name_ar }}
+                </div>
+                <div class="mb-3">
+                  <b>صورة المنتج: </b>
+                  <v-avatar dark v-bind="attrs" v-on="on">
+                    <a :href="`${baseApi}/${order.product.image}`" target="_blank">
+                      <img
+                        :src="`${baseApi}/${order.product.image}`" class="of-cover"
+                        alt="صورة الفئة"
+                      />
+                    </a>
+                  </v-avatar>
+                </div>
+              </div>
+            </v-card-text>
+            <v-card-actions>
+              <v-btn @click="close" color="secondary">إغلاق</v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+        <!-- End Add/Edit Dialog Form -->
       </v-toolbar>
+
+      <div class="pa-3">
+        <v-expansion-panels v-model="panel" multiple>
+          <v-expansion-panel>
+            <v-expansion-panel-header>
+              فلتر
+            </v-expansion-panel-header>
+            <v-expansion-panel-content>
+              <ValidationObserver
+                ref="obs"
+                v-slot="{ handleSubmit }">
+                <form
+                  ref="filterForm"
+                  @submit.prevent="handleSubmit(fetchFilter)">
+                  <v-card-text>      
+                    <v-row
+                      align="center"
+                      no-gutters
+                    >
+                      <v-col class="pa-2" cols="12" lg="4" sm="6">
+                        <VSelectWithValidation
+                          label="حالة الطلب"
+                          :items="['Pending','Processing','Shipped','Delivered','Cancelled','Refunded']"           
+                          prepend-icon="lock"
+                          v-model="filter.status"
+                        />
+                      </v-col>
+                      
+                      <v-col class="pa-2" cols="12" lg="4" sm="6">
+                        <VSelectWithValidation
+                          label="شركات الشحن"
+                          :items="shipping_companies_ids" 
+                          item-text="name"
+                          item-value="id"          
+                          prepend-icon="lock"
+                          v-model="filter.shipping_companies_id"
+                        />                        
+                      </v-col>
+                      
+                      <v-col class="pa-2" cols="12" lg="4" sm="6">
+                        <VSelectWithValidation
+                          label="حالة الدفع"
+                          :items="['Pending','Paid']"
+                          prepend-icon="lock"
+                          v-model="filter.payment_status"
+                        />
+                      </v-col>
+                    </v-row>
+                                    
+                  </v-card-text>
+
+                  <v-card-actions>
+                    <v-btn
+                      type="submit"
+                      :loading="connecting"
+                      color="primary">
+                      فلتر
+                    </v-btn>
+                    
+                    <v-btn
+                      @click="clearFilter"
+                      color="secondary">
+                      مسح الفلتر
+                    </v-btn>
+                  </v-card-actions>
+                </form>
+              </ValidationObserver>
+            </v-expansion-panel-content>
+          </v-expansion-panel>
+        </v-expansion-panels>
+
+      </div>
 
       <v-data-table
         loading-text="انتظر قليلا..."
@@ -117,42 +253,16 @@
           <v-chip v-else small color="secondary" dark>غير متوفر</v-chip>
         </template>
 
-
-
-        <template v-slot:[`item.order_meta`]="{ item }">        
-          <!-- 
-          order_meta: [{id: 96, order_id: 66, product_id: 25, color_id: 9, user_id: 6, qty: 1, product_type: "Piece",…}]
-            color: {id: 9, code: "#eed5fa", created_at: "2023-03-03T14:42:29.000000Z",…}
-            color_id
-            created_at
-            id
-            order_id
-            price_after_discount
-            price_before_discount
-            product: {
-              category_id
-              created_at
-              desc
-              id
-              image
-              library_price_of_packet
-              library_price_of_piece
-              name
-              name_ar
-              packet_pieces
-              stock
-              updated_at
-              user_price_of_packet
-              user_price_of_piece
-              product_id
-              product_type
-              qty
-              updated_at
-              user_id
-            }
-          -->
+        <template v-slot:[`item.order_meta`]="{ item }">
           <div v-if="item.order_meta != null">
-            <span>{{ item.order_meta.length }}</span>
+            <v-btn
+              color="blue"
+              icon
+              x-small
+              @click="viewOrder(item)"
+            >
+              <span>{{ item.order_meta.length }}</span>
+            </v-btn>
           </div>
           <v-chip v-else small color="secondary" dark>غير متوفر</v-chip>
         </template>
@@ -254,6 +364,24 @@
         </template>
 
         <template v-slot:[`item.actions`]="{ item }">
+          <!-- start async admin/role action -->
+          <v-tooltip right>
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn
+                color="blue"
+                icon
+                x-small
+                v-bind="attrs"
+                v-on="on"
+                @click="viewOrder(item)"
+              >
+                <v-icon>verified_user</v-icon>
+              </v-btn>
+            </template>
+            <span>عرض معلومات الطلب</span>
+          </v-tooltip>
+          <!-- end async admin/role action -->
+
           <!-- start Add-Edit action -->
           <v-tooltip right>
             <template v-slot:activator="{ on, attrs }">
@@ -322,12 +450,21 @@ export default {
       shipping_companies_id: "",
       payment_status: "",
     },
+    filter: {
+      status: "",
+      shipping_companies_id: null,
+      payment_status: "",
+    },
+    panel: [ 0 ],
+    isFiltering: false,
     connecting: false,
     errors: [],
     edit: false,
     dialog: false,
     requests: [],
     shipping_companies_ids: [],
+    order_meta: [],
+    viewOrderDialog: false,
     totalRequests: 0,
     pagination: {},
     loading: false,
@@ -374,6 +511,7 @@ export default {
   created() {
     if (this.loading) return;
     this.fetch();
+    this.getShippingCampaniesId();
   },
   methods: {
     ...mapActions(["showNotification"]),
@@ -389,7 +527,6 @@ export default {
           this.pagination.totalItems / this.pagination.rowsPerPage
         );
       });
-      this.getShippingCampaniesId();
       if (this.loading) return;
     },
     getDataFromApi(res = null) {
@@ -416,6 +553,55 @@ export default {
           });
         }
       });
+    },
+    fetchFilter() {
+      this.filterDataFromApi().then((data) => {
+        this.requests = JSON.parse(JSON.stringify(data.items));
+        //console.log('requests >>', data.items);
+        let meta = data.meta;
+        this.totalRequests = meta.total;
+        this.pagination.rowsPerPage = meta.per_page;
+        this.pagination.totalItems = meta.total;
+        this.pages = Math.ceil(
+          this.pagination.totalItems / this.pagination.rowsPerPage
+        );
+      });
+      if (this.loading) return;
+    },
+    filterDataFromApi() {
+      this.loading = true;
+      return new Promise((resolve) => {
+        let endpoint = `${this.baseApi}/api/admin/orders?page=${this.page}`;
+        if (this.filter.status != '') endpoint += `&status=${this.filter.status}`;
+        if (this.filter.shipping_companies_id != '') endpoint += `&shipping_companies_id=${this.filter.shipping_companies_id}`;
+        if (this.filter.payment_status != null) endpoint += `&payment_status=${this.filter.payment_status}`;
+
+        this.$http.get(endpoint).then((res) => {
+          this.isFiltering = true;
+          let items = res.data.data;
+          let meta = res.data.meta;
+          this.loading = false;
+          resolve({
+            items,
+            meta,
+          });
+        })
+        .catch((error) => {
+          if (error.message.includes('code 401')) {
+            //console.log('auth error >>');
+            this.$router.push({ path: '/auth/login' })
+          }
+        });
+      });
+    },
+    clearFilter() {
+      this.fetch();
+      this.isFiltering = false;
+      this.filter = {
+        status: "",
+        shipping_companies_id: null,
+        payment_status: "",
+      };
     },
     getShippingCampaniesId(res = null) {
       this.loading = true;
@@ -444,6 +630,8 @@ export default {
         shipping_companies_id: "",
         payment_status: "",
       };
+      this.order_meta = [];
+      this.viewOrderDialog = false;
     },
     editing(process, item = this.admin) {
       if (process === "add") {
@@ -531,21 +719,20 @@ export default {
         });
       }
     },
+    viewOrder(item) {
+      this.viewOrderDialog = !this.viewOrderDialog;
+      this.order_meta = item.order_meta;
+    },
   },
 };
 </script>
 
 <style scoped lang="scss">
-.my-2 {
-  margin-block: 0.5rem;
-}
-.my-3 {
-  margin-block: 1rem;
-}
-.py-2 {
-  padding-block: 0.5rem;
-}
-.py-3 {
-  padding-block: 1rem;
+.of-cover {
+  object-fit: cover;
+  -o-object-fit: cover;
+  width: 100%;
+  height: 48px;
+  margin-top: 8px;
 }
 </style>

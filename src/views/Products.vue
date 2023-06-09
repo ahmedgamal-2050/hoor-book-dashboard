@@ -714,6 +714,7 @@ export default {
       category_id: null
     },
     isFiltering: false,
+    panel: [ 0 ],
     productDiscription: "",
     reviews: [],
     viewDescriptionDialog: false,
@@ -752,7 +753,6 @@ export default {
     showColorMediaError: false,
     baseApi: window.location.origin,
     baseApi: BASE_API,
-    panel: [ 0 ],
   }),
   components: {
     VTextFieldWithValidation,
