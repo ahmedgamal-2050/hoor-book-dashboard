@@ -77,7 +77,7 @@
                     color="primary"
                     >حفظ</v-btn
                   >
-                  <v-btn @click="close" color="primary">إغلاق</v-btn>
+                  <v-btn @click="close" color="secondary">إغلاق</v-btn>
                 </v-card-actions>
               </form>
             </ValidationObserver>

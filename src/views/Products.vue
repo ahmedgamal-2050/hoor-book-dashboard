@@ -347,7 +347,7 @@
                     color="primary"
                     >حفظ</v-btn
                   >
-                  <v-btn @click="close" color="primary">إغلاق</v-btn>
+                  <v-btn @click="close" color="secondary">إغلاق</v-btn>
                 </v-card-actions>
               </form>
             </ValidationObserver>
@@ -362,7 +362,7 @@
               <span>وصف المنتج</span>
               <v-spacer></v-spacer>
               <v-btn icon small @click="close">
-                <v-icon>close</v-icon>
+                <v-icon>color="secondary">إغلاقclose</v-icon>
               </v-btn>
             </v-card-title>
             <v-card-text class="text-xs-center">
@@ -378,7 +378,7 @@
               </div>
             </v-card-text>
             <v-card-actions>
-              <v-btn @click="close" color="primary">إغلاق</v-btn>
+              <v-btn @click="close" color="secondary">إغلاق</v-btn>
             </v-card-actions>
           </v-card>
         </v-dialog>
@@ -405,6 +405,77 @@
         <!-- end Add action -->
       </v-toolbar>
 
+      <div class="pa-3">
+        <v-expansion-panels v-model="panel" multiple>
+          <v-expansion-panel>
+            <v-expansion-panel-header>
+              فلتر
+            </v-expansion-panel-header>
+            <v-expansion-panel-content>
+              <ValidationObserver
+                ref="obs"
+                v-slot="{ handleSubmit }">
+                <form
+                  ref="filterForm"
+                  @submit.prevent="handleSubmit(fetchFilter)">
+                  <v-card-text>      
+                    <v-row
+                      align="center"
+                      no-gutters
+                    >
+                      <v-col class="pa-2" cols="12" lg="4" sm="6">
+                        <VTextFieldWithValidation
+                          label="الإسم"
+                          v-model="filter.name"
+                          prepend-icon="lock"
+                          type="text"
+                        />
+                      </v-col>
+
+                      <v-col class="pa-2" cols="12" lg="4" sm="6">
+                        <VTextFieldWithValidation
+                          label="الإسم بالعربي"
+                          v-model="filter.name_ar"
+                          prepend-icon="lock"
+                          type="text"
+                        />
+                      </v-col>
+
+                      <v-col class="pa-2" cols="12" lg="4" sm="6">
+                        <VSelectWithValidation
+                          label="الفئة"
+                          :items="category_ids"
+                          item-text="name"
+                          item-value="id"
+                          prepend-icon="lock"
+                          v-model="filter.category_id"
+                        />
+                      </v-col>
+                    </v-row>
+                                    
+                  </v-card-text>
+
+                  <v-card-actions>
+                    <v-btn
+                      type="submit"
+                      :loading="connecting"
+                      color="primary">
+                      فلتر
+                    </v-btn>
+                    
+                    <v-btn
+                      @click="clearFilter"
+                      color="secondary">
+                      مسح الفلتر
+                    </v-btn>
+                  </v-card-actions>
+                </form>
+              </ValidationObserver>
+            </v-expansion-panel-content>
+          </v-expansion-panel>
+        </v-expansion-panels>
+
+      </div>
 
       <v-data-table
         loading-text="انتظر قليلا..."
@@ -426,12 +497,7 @@
         <template v-slot:[`item.image`]="{ item }">
           <!--  -->
           <v-avatar dark v-bind="attrs" v-on="on">
-            <img
-              v-if="item.image === null"
-              src="../assets/imgs/profile-img.jpg"
-              alt="صورة المنتج"
-            />
-            <a v-else :href="`${baseApi}/${item.image}`" target="_blank">
+            <a :href="`${baseApi}/${item.image}`" target="_blank">
               <img
                 class="of-cover"
                 :src="`${baseApi}/${item.image}`"
@@ -442,21 +508,34 @@
         </template>
 
         <template v-slot:[`item.name`]="{ item }">
-          <span v-if="item.name != null">{{ item.name }}</span>
-          <v-chip v-else small color="secondary" dark>غير متوفر</v-chip>
+          <div class="py-3">
+            <div v-if="item.name != null">
+              <div class="font-weight-bold">الاسم:</div>
+              {{ item.name }}
+            </div>
+            <v-chip v-else small color="secondary" dark>غير متوفر</v-chip>
+
+            <div v-if="item.name_ar != null">
+              <div class="font-weight-bold">الاسم بالعربي:</div>
+              {{ item.name_ar }}
+            </div>
+            <v-chip v-else small color="secondary" dark>غير متوفر</v-chip>            
+          </div>
         </template>
 
         <template v-slot:[`item.category`]="{ item }">
           <div v-if="item.category != null">
             <div><b># </b>{{ item.category.id }}</div>
             <div><b>الاسم: </b>{{ item.category.name }}</div>
-            <div>
-              <a :href="`${baseUrl}/${item.category.image}`" target="_blank">
-                <img
-                  :src="`${baseUrl}/${item.category.image}`" class="of-cover"
-                  alt="صورة الفئة"
-                />
-              </a>
+            <div class="mt-2">
+              <v-avatar dark v-bind="attrs" v-on="on">
+                <a :href="`${baseApi}/${item.category.image}`" target="_blank">
+                  <img
+                    :src="`${baseApi}/${item.category.image}`" class="of-cover"
+                    alt="صورة الفئة"
+                  />
+                </a>
+              </v-avatar>
             </div>
           </div>
           <v-chip v-else small color="secondary" dark>غير متوفر</v-chip>
@@ -629,6 +708,12 @@ export default {
       media: [],
       colors: []
     },
+    filter: {
+      name: "",
+      name_ar: "",
+      category_id: null
+    },
+    isFiltering: false,
     productDiscription: "",
     reviews: [],
     viewDescriptionDialog: false,
@@ -665,8 +750,9 @@ export default {
     showMediaError: false,
     showColorError: false,
     showColorMediaError: false,
-    baseUrl: window.location.origin,
+    baseApi: window.location.origin,
     baseApi: BASE_API,
+    panel: [ 0 ],
   }),
   components: {
     VTextFieldWithValidation,
@@ -698,7 +784,7 @@ export default {
     fetch() {
       this.getDataFromApi().then((data) => {
         this.requests = JSON.parse(JSON.stringify(data.items));
-        //console.log('getDataFromApi requests >>', data.items);
+        //console.log('requests >>', data.items);
         let meta = data.meta;
         this.totalRequests = meta.total;
         this.pagination.rowsPerPage = meta.per_page;
@@ -709,10 +795,24 @@ export default {
       });
       if (this.loading) return;
     },
-    getDataFromApi(res = null) {
+    fetchFilter() {
+      this.filterDataFromApi().then((data) => {
+        this.requests = JSON.parse(JSON.stringify(data.items));
+        //console.log('requests >>', data.items);
+        let meta = data.meta;
+        this.totalRequests = meta.total;
+        this.pagination.rowsPerPage = meta.per_page;
+        this.pagination.totalItems = meta.total;
+        this.pages = Math.ceil(
+          this.pagination.totalItems / this.pagination.rowsPerPage
+        );
+      });
+      if (this.loading) return;
+    },
+    getDataFromApi(filter = null) {
       this.loading = true;
       return new Promise((resolve) => {
-        if (res == null) {
+        if (filter == null) {
           let endpoint = `${this.baseApi}/api/admin/products?page=${this.page}`;
 
           this.$http.get(endpoint).then((res) => {
@@ -732,7 +832,62 @@ export default {
             }
           });
         }
+        else {
+          let endpoint = `${this.baseApi}/api/admin/products?page=${this.page}`;
+
+          this.$http.get(endpoint).then((res) => {
+            let items = res.data.data;
+            //console.log('items >>', items);
+            let meta = res.data.meta;
+            this.loading = false;
+            resolve({
+              items,
+              meta,
+            });
+          })
+          .catch((error) => {
+            if (error.message.includes('code 401')) {
+              //console.log('auth error >>');
+              this.$router.push({ path: '/auth/login' })
+            }
+          });
+        }
       });
+    },
+    filterDataFromApi() {
+      this.loading = true;
+      return new Promise((resolve) => {
+        let endpoint = `${this.baseApi}/api/admin/products?page=${this.page}`;
+        if (this.filter.name != '') endpoint += `&name=${this.filter.name}`;
+        if (this.filter.name_ar != '') endpoint += `&name_ar=${this.filter.name_ar}`;
+        if (this.filter.category_id != null) endpoint += `&category_id=${this.filter.category_id}`;
+
+        this.$http.get(endpoint).then((res) => {
+          this.isFiltering = true;
+          let items = res.data.data;
+          let meta = res.data.meta;
+          this.loading = false;
+          resolve({
+            items,
+            meta,
+          });
+        })
+        .catch((error) => {
+          if (error.message.includes('code 401')) {
+            //console.log('auth error >>');
+            this.$router.push({ path: '/auth/login' })
+          }
+        });
+      });
+    },
+    clearFilter() {
+      this.fetch();
+      this.isFiltering = false;
+      this.filter = {
+        name: "",
+        name_ar: "",
+        category_id: null
+      };
     },
     close() {
       this.errors = [];
@@ -775,7 +930,7 @@ export default {
       this.dialog = !this.dialog;
       this.admin.id = item.id;
       this.admin.name = item.name;
-      this.admin.name_ar = item.name;
+      this.admin.name_ar = item.name_ar;
       this.admin.desc = item.desc;
       this.admin.stock = item.stock;
       this.admin.user_price_of_piece = item.user_price_of_piece;
@@ -1035,9 +1190,6 @@ export default {
 .align-items-center {
   align-items: center;
 }
-.mx-3 {
-  margin-inline: 1rem;
-}
 .fz12 {
   font-size: 12px;
 } 
@@ -1046,15 +1198,6 @@ export default {
 }
 .text-warning {
   color: goldenrod;
-}
-.ml-2 {
-  margin-left: 0.5rem;
-}
-.mt-3 {
-  margin-top: 1rem;
-}
-.mb-3 {
-  margin-bottom: 1rem;
 }
 .fbold {
   font-weight: 700 !important; 

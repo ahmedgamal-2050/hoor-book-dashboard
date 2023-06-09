@@ -35,7 +35,7 @@
                             </v-card-text>
                             <v-card-actions>
                                 <v-btn type="submit" :disabled="invalid || !validated" :loading="connecting" color="primary">حفظ</v-btn>
-                                <v-btn @click="close" color="primary">إغلاق</v-btn>
+                                <v-btn @click="close" color="secondary">إغلاق</v-btn>
                             </v-card-actions>
                         </form>
                     </ValidationObserver>
@@ -70,7 +70,7 @@
                             </v-card-text>
                             <v-card-actions>
                                 <v-btn type="submit" :loading="connecting" color="primary">حفظ</v-btn>
-                                <v-btn @click="close" color="primary">إغلاق</v-btn>
+                                <v-btn @click="close" color="secondary">إغلاق</v-btn>
                             </v-card-actions>
                         </form>
                     </ValidationObserver>
@@ -108,7 +108,7 @@
                             </v-card-text>
                             <v-card-actions>
                                 <v-btn type="submit" :disabled="invalid || !validated" :loading="connecting" color="primary">حفظ</v-btn>
-                                <v-btn @click="close" color="primary">إغلاق</v-btn>
+                                <v-btn @click="close" color="secondary">إغلاق</v-btn>
                             </v-card-actions>
                         </form>
                     </ValidationObserver>

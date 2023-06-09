@@ -26,8 +26,10 @@ const vutifyOptins = {
     theme: {
         themes: {
             light: {
-                primary: '#ab3bba',
-                secondary: '#b0bec5',
+                primary: '#6b2c7a',
+                secondary: '#bd76cd',
+                orange: '#fd9800',
+                purple: '#6b2c7a',
                 accent: '#8c9eff',
                 error: '#b71c1c',
             },

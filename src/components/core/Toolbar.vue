@@ -1,6 +1,6 @@
 <template>
   <div class="overflow-hidden" height="300">
-    <v-app-bar color="primary" dark>
+    <v-app-bar color="secondary" dark>
       <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
 
       <v-toolbar-title>Hoor Book</v-toolbar-title>
