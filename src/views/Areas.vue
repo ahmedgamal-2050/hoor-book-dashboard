@@ -333,7 +333,7 @@ export default {
     
     headers: [
       { text: "#", value: "id", ...headerConst },
-      { text: "# المحافظة", value: "city_id", ...headerConst },
+      { text: "# المدينة", value: "city_id", ...headerConst },
       { text: "الاسم", value: "name", ...headerConst },
       { text: "الاسم بالعربية", value: "name_ar", ...headerConst },
       { text: "التكلفة", value: "cost", ...headerConst },
