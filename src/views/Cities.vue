@@ -103,6 +103,67 @@
         <!-- end Add action -->
       </v-toolbar>
 
+      <!-- Filter -->
+      <div class="pa-3">
+        <v-expansion-panels v-model="panel" multiple>
+          <v-expansion-panel>
+            <v-expansion-panel-header>
+              فلتر
+            </v-expansion-panel-header>
+            <v-expansion-panel-content>
+              <ValidationObserver
+                ref="obs"
+                v-slot="{ handleSubmit }">
+                <form
+                  ref="filterForm"
+                  @submit.prevent="handleSubmit(fetchFilter)">
+                  <v-card-text>
+                    <v-row
+                      align="center"
+                      no-gutters
+                    >
+                      <v-col class="pa-2" cols="12" lg="4" sm="6">
+                        <VTextFieldWithValidation
+                          label="الإسم"
+                          v-model="filter.name"
+                          prepend-icon="lock"
+                          type="text"
+                        />
+                      </v-col>
+
+                      <v-col class="pa-2" cols="12" lg="4" sm="6">
+                        <VTextFieldWithValidation
+                          label="الإسم بالعربي"
+                          v-model="filter.name_ar"
+                          prepend-icon="lock"
+                          type="text"
+                        />
+                      </v-col>
+                    </v-row>      
+                  </v-card-text>
+
+                  <v-card-actions>
+                    <v-btn
+                      type="submit"
+                      :loading="connecting"
+                      color="primary">
+                      فلتر
+                    </v-btn>
+                    
+                    <v-btn
+                      @click="clearFilter"
+                      color="secondary">
+                      مسح الفلتر
+                    </v-btn>
+                  </v-card-actions>
+                </form>
+              </ValidationObserver>
+            </v-expansion-panel-content>
+          </v-expansion-panel>
+        </v-expansion-panels>
+
+      </div>
+
       <v-data-table
         loading-text="انتظر قليلا..."
         :headers="headers"
@@ -238,6 +299,12 @@ export default {
       name_ar: "",
       governorate_id: ""
     },
+    filter: {
+      name: "",
+      name_ar: "",
+    },
+    panel: [ 0 ],
+    isFiltering: false,
     connecting: false,
     errors: [],
     edit: false,
@@ -295,13 +362,14 @@ export default {
   created() {
     if (this.loading) return;
     this.fetch();
+    this.getGovernoratesIds();
   },
   methods: {
     ...mapActions(["showNotification"]),
     fetch() {
       this.getDataFromApi().then((data) => {
         this.requests = JSON.parse(JSON.stringify(data.items));
-        console.log('getDataFromApi requests >>', this.requests);
+        //console.log('getDataFromApi requests >>', this.requests);
         let meta = data.meta;
         this.totalRequests = meta.total;
         this.pagination.rowsPerPage = meta.per_page;
@@ -310,7 +378,6 @@ export default {
           this.pagination.totalItems / this.pagination.rowsPerPage
         );
       });
-      this.getGovernoratesIds();
       if (this.loading) return;
     },
     getDataFromApi(res = null) {
@@ -350,6 +417,52 @@ export default {
           });
         }
       });
+    },
+    fetchFilter() {
+      this.filterDataFromApi().then((data) => {
+        this.requests = JSON.parse(JSON.stringify(data.items));
+        //console.log('requests >>', data.items);
+        let meta = data.meta;
+        this.totalRequests = meta.total;
+        this.pagination.rowsPerPage = meta.per_page;
+        this.pagination.totalItems = meta.total;
+        this.pages = Math.ceil(
+          this.pagination.totalItems / this.pagination.rowsPerPage
+        );
+      });
+      if (this.loading) return;
+    },
+    filterDataFromApi() {
+      this.loading = true;
+      return new Promise((resolve) => {
+        let endpoint = `${this.baseApi}/api/admin/cities?page=${this.page}`;
+        if (this.filter.name != '') endpoint += `&name=${this.filter.name}`;
+        if (this.filter.name_ar != '') endpoint += `&name_ar=${this.filter.name_ar}`;
+
+        this.$http.get(endpoint).then((res) => {
+          let items = res.data.data;
+          let meta = res.data;
+          this.loading = false;
+          resolve({
+            items,
+            meta,
+          });
+        })
+        .catch((error) => {
+          if (error.message.includes('code 401')) {
+            console.log('auth error >>');
+            this.$router.push({ path: '/auth/login' })
+          }
+        });
+      });
+    },
+    clearFilter() {
+      this.fetch();
+      this.isFiltering = false;
+      this.filter = {
+        name: "",
+        name_ar: "",
+      };
     },
     getGovernoratesIds(res = null) {
       this.loading = true;

@@ -418,7 +418,7 @@
                 <form
                   ref="filterForm"
                   @submit.prevent="handleSubmit(fetchFilter)">
-                  <v-card-text>      
+                  <v-card-text>
                     <v-row
                       align="center"
                       no-gutters
