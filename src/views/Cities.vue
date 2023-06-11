@@ -181,8 +181,11 @@
           <v-chip v-else small color="secondary" dark>غير متوفر</v-chip>
         </template>
       
-        <template v-slot:[`item.governorate_id`]="{ item }">
-          <span v-if="item.governorate_id != null">{{ item.governorate_id }}</span>
+        <template v-slot:[`item.governorate`]="{ item }">
+          <div v-if="item.governorate != null">
+            <div>{{ item.governorate.name }}</div>
+            <div>{{ item.governorate.name_ar }}</div>
+          </div>
           <v-chip v-else small color="secondary" dark>غير متوفر</v-chip>
         </template>
         
@@ -316,9 +319,9 @@ export default {
     loading: false,
     headers: [
       { text: "#", value: "id", ...headerConst },
-      { text: "# المحافظة", value: "governorate_id", ...headerConst },
       { text: "الاسم", value: "name", ...headerConst },
       { text: "الاسم بالعربية", value: "name_ar", ...headerConst },
+      { text: "المحافظة", value: "governorate", ...headerConst },
       { text: "أنشئت في", value: "created_at", ...headerConst },
       { text: "تم التحديث في", value: "updated_at", ...headerConst },
       { text: "عمليات", value: "actions", ...headerConst },

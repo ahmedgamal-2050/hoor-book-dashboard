@@ -188,11 +188,6 @@
           <span v-if="item.id != null">{{ item.id }}</span>
           <v-chip v-else small color="secondary" dark>غير متوفر</v-chip>
         </template>
-      
-        <template v-slot:[`item.city_id`]="{ item }">
-          <span v-if="item.city_id != null">{{ item.city_id }}</span>
-          <v-chip v-else small color="secondary" dark>غير متوفر</v-chip>
-        </template>
         
         <template v-slot:[`item.name`]="{ item }">
           <div v-if="item.name != null">
@@ -204,6 +199,14 @@
         <template v-slot:[`item.name_ar`]="{ item }">
           <div v-if="item.name_ar != null">
             <span>{{ item.name_ar }}</span>
+          </div>
+          <v-chip v-else small color="secondary" dark>غير متوفر</v-chip>
+        </template>
+      
+        <template v-slot:[`item.city`]="{ item }">
+          <div v-if="item.city != null">
+            <div>{{ item.city.name }}</div>
+            <div>{{ item.city.name_ar }}</div>
           </div>
           <v-chip v-else small color="secondary" dark>غير متوفر</v-chip>
         </template>
@@ -333,9 +336,9 @@ export default {
     
     headers: [
       { text: "#", value: "id", ...headerConst },
-      { text: "# المدينة", value: "city_id", ...headerConst },
       { text: "الاسم", value: "name", ...headerConst },
       { text: "الاسم بالعربية", value: "name_ar", ...headerConst },
+      { text: "المدينة", value: "city", ...headerConst },
       { text: "التكلفة", value: "cost", ...headerConst },
       { text: "أنشئت في", value: "created_at", ...headerConst },
       { text: "تم التحديث في", value: "updated_at", ...headerConst },

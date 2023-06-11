@@ -62,16 +62,16 @@
                   <VFileInputWithValidation
                     label="الصورة"
                     prepend-icon="camera"
-                    rules="required"
+                    :rules="edit === true ? '' : 'required'"
                     v-model="admin.image"
                   />
-                  <div>
-                    <span v-if="admin.image === null || admin.image === ''">لا يوجد صورة</span>
-                    <div v-else-if="typeof admin.image === 'object'"></div>
+                  <div class="text-center">
+                    <span v-if="admin.view_image === null || admin.view_image === ''">لا يوجد صورة</span>
+                    <div v-else-if="typeof admin.view_image === 'object'"></div>
 
-                    <a v-else :href="`${baseUrl}/${admin.image}`" target="_blank">
-                      <img class="of-cover"
-                        :src="`${baseApi}/${admin.image}`"
+                    <a v-else :href="`${baseUrl}/${admin.view_image}`" target="_blank">
+                      <img class="of-contain"
+                        :src="`${baseApi}/${admin.view_image}`"
                         alt="صورة المنتج"
                       />
                     </a>
@@ -214,28 +214,28 @@
           <v-chip v-else small color="secondary" dark>غير متوفر</v-chip>
         </template>
 
-        <template v-slot:[`item.parent_id`]="{ item }">
-          <div v-if="item.parent_id != null">
-            <span>{{ item.parent_id }}</span>
+        <template v-slot:[`item.parent`]="{ item }">
+          <div v-if="item.parent != null">
+            <div>{{ item.parent.name }}</div>
+            <div>{{ item.parent.name_ar }}</div>
           </div>
           <v-chip v-else small color="secondary" dark>غير متوفر</v-chip>
         </template>
 
         <template v-slot:[`item.image`]="{ item }">
-          <!--  -->
-          <v-avatar dark v-bind="attrs" v-on="on">
+          <div>
             <img
               v-if="item.image === null"
               src="../assets/imgs/profile-img.jpg"
               alt="صورة المنتج"
             />
             <a v-else :href="`${baseApi}/${item.image}`" target="_blank">
-              <img class="of-cover"
+              <img class="of-contain"
                 :src="`${baseApi}/${item.image}`"
                 alt="صورة المنتج"
               />
             </a>
-          </v-avatar>
+          </div>
         </template>
         
         <template v-slot:[`item.name`]="{ item }">
@@ -358,6 +358,7 @@ export default {
     admin: {
       name: "",
       name_ar: "",
+      view_image: "",
       image: "",
       parent_id: null
     },
@@ -380,7 +381,7 @@ export default {
     
     headers: [
       { text: "#", value: "id", ...headerConst },
-      { text: "الفئة التابعة", value: "parent_id", ...headerConst },
+      { text: "الفئة التابعة", value: "parent", ...headerConst },
       { text: "الصورة", value: "image", ...headerConst },
       { text: "الاسم", value: "name", ...headerConst },
       { text: "الاسم بالعربية", value: "name_ar", ...headerConst },
@@ -545,6 +546,7 @@ export default {
         name: "",
         name_ar: "",
         image: "",
+        view_image: "",
         parent_id: null
       };
     },
@@ -564,7 +566,8 @@ export default {
       this.admin.id = item.id;
       this.admin.name = item.name;
       this.admin.name_ar = item.name_ar;
-      this.admin.image = item.image;
+      this.admin.view_image = item.image;
+      this.admin.image = "";
       this.admin.parent_id = item.parent_id;
     },
     saveItem() {
@@ -595,6 +598,7 @@ export default {
                 name: "",
                 name_ar: "",
                 image: "",
+                view_image: "",
                 parent_id: null
               };
             }
@@ -621,6 +625,7 @@ export default {
                 name: "",
                 name_ar: "",
                 image: "",
+                view_image: "",
                 parent_id: null,
               };
             }
@@ -641,27 +646,6 @@ export default {
         });
       }
     },
-    onChangeFileUpload($event) {
-      console.log('onChangeFileUpload e >>', $event);
-      if ($event && $event.files && $event.files.length > 0) {
-        this.file = $event.files[0]
-        console.log('onChangeFileUpload file >>', this.file);
-        this.encodeImage(this.file)
-      }
-      else {
-        this.admin.image = $event
-      }
-    },
-    encodeImage (input) {
-      if (input) {
-        const reader = new FileReader()
-        reader.onload = (e) => {
-          this.admin.image = e.target.result
-          console.log('onChangeFileUpload image >>', e.target.result);
-        }
-        reader.readAsDataURL(input)
-      }
-    }
   },
 };
 </script>
@@ -675,7 +659,14 @@ export default {
 .of-cover {
   object-fit: cover;
   -o-object-fit: cover;
-  width: 100%;
+  width: 48px;
+  height: 48px;
+  margin-top: 8px;
+}
+.of-contain {
+  object-fit: contain;
+  -o-object-fit: contain;
+  width: 48px;
   height: 48px;
   margin-top: 8px;
 }

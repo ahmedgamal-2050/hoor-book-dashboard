@@ -246,9 +246,10 @@
           <v-chip v-else small color="secondary" dark>غير متوفر</v-chip>
         </template>
 
-        <template v-slot:[`item.shipping_companies_id`]="{ item }">
-          <div v-if="item.shipping_companies_id != null">
-            <span>{{ item.shipping_companies_id }}</span>
+        <template v-slot:[`item.shipping_company`]="{ item }">
+          <div v-if="item.shipping_company != null">
+            <div>{{ item.shipping_company.name }}</div>
+            <div>{{ item.shipping_company.name_ar }}</div>
           </div>
           <v-chip v-else small color="secondary" dark>غير متوفر</v-chip>
         </template>
@@ -473,7 +474,7 @@ export default {
       { text: "#", value: "id", ...headerConst },
       { text: "حالة الطلب", value: "status", ...headerConst },
       { text: "معلومات الطلب", value: "order_meta", ...headerConst },
-      { text: "شركة الشحن #", value: "shipping_companies_id", ...headerConst },
+      { text: "شركة الشحن", value: "shipping_company", ...headerConst },
       { text: "معلومات الدفع", value: "total", ...headerConst },
       { text: "عنوان العميل", value: "user_address", ...headerConst },
       { text: "الملاحظات", value: "notes", ...headerConst },
