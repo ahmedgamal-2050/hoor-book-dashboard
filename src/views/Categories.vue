@@ -90,7 +90,7 @@
                 <v-card-actions>
                   <v-btn
                     type="submit"
-                    :disabled="invalid || !validated"
+                    :disabled="invalid"
                     :loading="connecting"
                     color="primary"
                     >حفظ</v-btn
@@ -360,12 +360,12 @@ export default {
       name_ar: "",
       view_image: "",
       image: "",
-      parent_id: null
+      parent_id: "",
     },
     filter: {
       name: "",
       name_ar: "",
-      parent_id: null,
+      parent_id: "",
     },
     panel: [ 0 ],
     isFiltering: false,
@@ -518,7 +518,7 @@ export default {
       this.filter = {
         name: "",
         name_ar: "",
-        parent_id: null,
+        parent_id: "",
       };
     },
     getCategoriesId(res = null) {
@@ -547,7 +547,7 @@ export default {
         name_ar: "",
         image: "",
         view_image: "",
-        parent_id: null
+        parent_id: "",
       };
     },
     editing(process, item = this.admin) {
@@ -599,7 +599,7 @@ export default {
                 name_ar: "",
                 image: "",
                 view_image: "",
-                parent_id: null
+                parent_id: "",
               };
             }
           })
@@ -626,7 +626,7 @@ export default {
                 name_ar: "",
                 image: "",
                 view_image: "",
-                parent_id: null,
+                parent_id: "",
               };
             }
           })
