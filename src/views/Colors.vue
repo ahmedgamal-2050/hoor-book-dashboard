@@ -356,7 +356,10 @@ export default {
         this.$http
           .put(endpoint, { code: this.admin.code })
           .then((res) => {
-            if (res.data.status.status) {
+            if (res.data && res.data.status && !res.data.status.status) {
+              this.showNotification(res.data.status.validation_message);
+            }
+            else {
               this.showNotification("تمت العملية بنجاح");
               this.fetch();
               this.alert.type = "warning";
@@ -368,9 +371,6 @@ export default {
                 code: "",
               };
             }
-            else {
-              this.showNotification(res.data.status.validation_message);
-            }
           })
           .catch(({ response }) => {
             this.errors = response.data.errors;
@@ -379,7 +379,10 @@ export default {
         this.$http
           .post(`${this.baseApi}/api/admin/colors`, formdata)
           .then((res) => {
-            if (res.data.status.status) {
+            if (res.data && res.data.status && !res.data.status.status) {
+              this.showNotification(res.data.status.validation_message);
+            }
+            else {
               this.showNotification("تمت العملية بنجاح");
               this.fetch();
               this.alert.type = "info";
@@ -390,9 +393,6 @@ export default {
                 id: null,
                 code: "",
               };
-            }
-            else {
-              this.showNotification(res.data.status.validation_message);
             }
           })
           .catch(({ response }) => {
