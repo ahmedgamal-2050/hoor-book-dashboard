@@ -100,14 +100,6 @@
               <div v-for="order in order_meta">
                 <hr/>
                 <div class="mt-3 mb-3">
-                  <b>تعريف الطلب: </b>
-                  {{ order.order_id }}
-                </div>
-                <div class="mb-3">
-                  <b>تعريف اللون: </b>
-                  {{ order.color.id }}
-                </div>
-                <div class="mb-3">
                   <b>كود اللون: </b>
                   {{ order.color.code }}
                   <span :style="{'background': order.color.code}" style="width: 16px; height: 16px; margin-inline: 5px; display: inline-block; border-radius: 4px;"></span>
@@ -116,10 +108,6 @@
                   <b>السعر المنتج: </b>
                   <span class="text-decoration-line-through">{{ order.price_before_discount }}</span>
                   <span class="green--text font-weight-bold mx-2">{{ order.price_after_discount }}</span>
-                </div>
-                <div class="mb-3">
-                  <b>تعريف المنتج: </b>
-                  {{ order.product.id }}
                 </div>
                 <div class="mb-3">
                   <b>إسم المنتج: </b>
@@ -131,14 +119,14 @@
                 </div>
                 <div class="mb-3">
                   <b>صورة المنتج: </b>
-                  <v-avatar dark v-bind="attrs" v-on="on">
+                  <span>
                     <a :href="`${baseApi}/${order.product.image}`" target="_blank">
                       <img
-                        :src="`${baseApi}/${order.product.image}`" class="of-cover"
+                        :src="`${baseApi}/${order.product.image}`" class="of-contain"
                         alt="صورة الفئة"
                       />
                     </a>
-                  </v-avatar>
+                  </span>
                 </div>
               </div>
             </v-card-text>
@@ -733,6 +721,13 @@ export default {
   object-fit: cover;
   -o-object-fit: cover;
   width: 100%;
+  height: 48px;
+  margin-top: 8px;
+}
+.of-contain {
+  object-fit: contain;
+  -o-object-fit: contain;
+  width: 48px;
   height: 48px;
   margin-top: 8px;
 }
