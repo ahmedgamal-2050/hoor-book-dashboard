@@ -115,12 +115,23 @@
                   />
                   
                   <VFileInputWithValidation
-                    rules="required"
+                    :rules="edit === true ? '' : 'required'"
                     label="الصورة"
                     variant="filled"
                     prepend-icon="camera"
                     v-model="admin.image"
                   />
+                  <div class="text-center">
+                    <span v-if="admin.view_image === null || admin.view_image === ''">لا يوجد صورة</span>
+                    <div v-else-if="typeof admin.view_image === 'object'"></div>
+
+                    <a v-else :href="`${baseUrl}/${admin.view_image}`" target="_blank">
+                      <img class="of-contain"
+                        :src="`${baseApi}/${admin.view_image}`"
+                        alt="صورة المنتج"
+                      />
+                    </a>
+                  </div>
 
                   <VTextFieldWithValidation
                     label="الخصم"
@@ -171,13 +182,24 @@
                     <div class="d-flex align-items-center">
                       <VFileInputWithValidation
                         class="w-100"
-                        rules="required"
+                        :rules="edit === true ? '' : 'required'"
                         label="صورة الوسائط"
                         variant="filled"
                         prepend-icon="camera"
                         v-model="find.value" 
                         :key="index"
                       />
+                      <div class="text-center">
+                        <span v-if="!find.view_image">لا يوجد صورة</span>
+                        <div v-else-if="typeof find.view_image === 'object'"></div>
+
+                        <a v-else :href="`${baseApi}/${find.view_image}`" target="_blank">
+                          <img class="of-contain"
+                            :src="`${baseApi}/${find.view_image}`"
+                            alt="صورة المنتج"
+                          />
+                        </a>
+                      </div>
                       
                       <v-tooltip left>
                         <template v-slot:activator="{ on, attrs }">
@@ -284,6 +306,18 @@
                                     v-model="med.value" 
                                     :key="key"
                                   />
+                                </div>
+
+                                <div class="text-center">
+                                  <span v-if="med.view_image === null || med.view_image === ''">لا يوجد صورة</span>
+                                  <div v-else-if="typeof med.view_image === 'object'"></div>
+
+                                  <a v-else :href="`${baseUrl}/${med.view_image}`" target="_blank">
+                                    <img class="of-contain"
+                                      :src="`${baseApi}/${med.view_image}`"
+                                      alt="صورة المنتج"
+                                    />
+                                  </a>
                                 </div>
 
                                 <!-- Delete Color Media -->
@@ -496,15 +530,15 @@
 
         <template v-slot:[`item.image`]="{ item }">
           <!--  -->
-          <v-avatar dark v-bind="attrs" v-on="on">
+          <div>
             <a :href="`${baseApi}/${item.image}`" target="_blank">
               <img
-                class="of-cover"
+                class="of-contain"
                 :src="`${baseApi}/${item.image}`"
                 alt="صورة المنتج"
               />
             </a>
-          </v-avatar>
+          </div>
         </template>
 
         <template v-slot:[`item.name`]="{ item }">
@@ -528,14 +562,14 @@
             <div><b># </b>{{ item.category.id }}</div>
             <div><b>الاسم: </b>{{ item.category.name }}</div>
             <div class="mt-2">
-              <v-avatar dark v-bind="attrs" v-on="on">
+              <div>
                 <a :href="`${baseApi}/${item.category.image}`" target="_blank">
                   <img
-                    :src="`${baseApi}/${item.category.image}`" class="of-cover"
+                    :src="`${baseApi}/${item.category.image}`" class="of-contain"
                     alt="صورة الفئة"
                   />
                 </a>
-              </v-avatar>
+              </div>
             </div>
           </div>
           <v-chip v-else small color="secondary" dark>غير متوفر</v-chip>
@@ -939,9 +973,14 @@ export default {
       this.admin.user_price_of_packet = item.user_price_of_packet;
       this.admin.library_price_of_packet = item.library_price_of_packet;
       this.admin.offer = item.offer;
-      this.admin.image = item.image;
+      this.admin.view_image = item.image;
+      this.admin.image = "";
       this.admin.category_id = item.category.id;
-      this.admin.media = item.media;
+      if (item.media && item.media.length > 0) {
+        for (var i = 0; i < item.media.length; i++) {
+          this.addMedia(item.media[i]);
+        }
+      }
       if (item.colors && item.colors.length > 0) {
         for (var i = 0; i < item.colors.length; i++) {
           this.addColor(item.colors[i]);
@@ -983,6 +1022,12 @@ export default {
 
       if (this.edit) {
         let endpoint = `${this.baseApi}/api/admin/products/${this.admin.id}`;
+        let media = [];
+        if (this.admin.media && this.admin.media.length > 0) {
+          media = this.admin.media.map((item) => item.value);
+          //console.log('edit media >>', media);
+        }
+        
         this.$http
           .post(endpoint, {
             name: this.admin.name,
@@ -997,7 +1042,7 @@ export default {
             offer: (this.admin.offer) ? this.admin.offer : null,
             image: this.admin.image,
             category_id: this.admin.category_id,
-            media: this.admin.media,
+            media: media,
             colors: (this.admin.colors && this.admin.colors.length > 0) ? this.admin.colors : null,
           })
           .then((res) => {
@@ -1121,8 +1166,19 @@ export default {
         }
       });
     },
-    addMedia: function () {
-      this.admin.media.push({ value: '' });
+    addMedia: function (item) {
+      if (!item) {
+        this.admin.media.push({
+          value: "",
+          view_image: ""
+        });
+      }
+      else {
+        this.admin.media.push({
+          value: "",
+          view_image: item.image
+        });
+      }
       this.showMediaError = false;
     },
     deleteMedia: function (index) {
@@ -1206,6 +1262,13 @@ export default {
   object-fit: cover;
   -o-object-fit: cover;
   width: 100%;
+  height: 48px;
+  margin-top: 8px;
+}
+.of-contain {
+  object-fit: contain;
+  -o-object-fit: contain;
+  width: 48px;
   height: 48px;
   margin-top: 8px;
 }
