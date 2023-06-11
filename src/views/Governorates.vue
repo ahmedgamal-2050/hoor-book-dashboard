@@ -299,6 +299,7 @@ export default {
     totalRequests: 0,
     pagination: {},
     loading: false,
+    apiLoading: false,
     headers:
      [
       { text: "#", value: "id", ...headerConst },
@@ -475,6 +476,7 @@ export default {
     },
     saveItem() {
       this.connecting = true;
+      this.apiLoading = true;
       let formdata = new FormData();
       if (this.admin.name) formdata.append("name", this.admin.name);
       if (this.admin.name_ar) formdata.append("name_ar", this.admin.name_ar);
@@ -484,7 +486,11 @@ export default {
         this.$http
           .put(endpoint, { name: this.admin.name, name_ar: this.admin.name_ar })
           .then((res) => {
-            if (res.data.status.status) {
+            this.apiLoading = false;
+            if (res.data && res.data.status && !res.data.status.status) {
+              this.showNotification(res.data.status.validation_message);
+            }
+            else {
               this.showNotification("تمت العملية بنجاح");
               this.fetch();
               this.alert.type = "warning";
@@ -497,18 +503,20 @@ export default {
                 name_ar: "",
               };
             }
-            else {
-              this.showNotification(res.data.status.validation_message);
-            }
           })
           .catch(({ response }) => {
+            this.apiLoading = false;
             this.errors = response.data.errors;
           });
       } else {
         this.$http
           .post(`${this.baseApi}/api/admin/governorates`, formdata)
           .then((res) => {
-            if (res.data.status.status) {
+            this.apiLoading = false;
+            if (res.data && res.data.status && !res.data.status.status) {
+              this.showNotification(res.data.status.validation_message);
+            }
+            else {
               this.showNotification("تمت العملية بنجاح");
               this.fetch();
               this.alert.type = "info";
@@ -521,11 +529,9 @@ export default {
                 name_ar: "",
               };
             }
-            else {
-              this.showNotification(res.data.status.validation_message);
-            }
           })
           .catch(({ response }) => {
+            this.apiLoading = false;
             this.errors = response.data.errors;
           });
       }
