@@ -528,7 +528,10 @@ export default {
             expiry_date: this.admin.expiry_date,
           })
           .then((res) => {
-            if (res.data.status.status) {
+            if (res.data && res.data.status && !res.data.status.status) {
+              this.showNotification(res.data.status.validation_message);
+            }
+            else {
               this.showNotification("تمت العملية بنجاح");
               this.fetch();
               this.alert.type = "warning";
@@ -543,9 +546,6 @@ export default {
                 expiry_date: "",
               };
             }
-            else {
-              this.showNotification(res.data.status.validation_message);
-            }
           })
           .catch(({ response }) => {
             this.errors = response.data.errors;
@@ -555,7 +555,10 @@ export default {
         this.$http
           .post(`${this.baseApi}/api/admin/coupon`, formdata)
           .then((res) => {
-            if (res.data.status.status) {
+            if (res.data && res.data.status && !res.data.status.status) {
+              this.showNotification(res.data.status.validation_message);
+            }
+            else {
               this.showNotification("تمت العملية بنجاح");
               this.fetch();
               this.alert.type = "info";
@@ -569,9 +572,6 @@ export default {
                 value: "",
                 expiry_date: "",
               };
-            }
-            else {
-              this.showNotification(res.data.status.validation_message);
             }
           })
           .catch(({ response }) => {
