@@ -610,7 +610,7 @@ export default {
         this.$http
           .post(`${this.baseApi}/api/admin/categories`, formdata)
           .then((res) => {
-            if (!res.data.status.status) {
+            if (res.data && res.data.status && !res.data.status.status) {
               this.showNotification(res.data.status.validation_message);
             }
             else {
