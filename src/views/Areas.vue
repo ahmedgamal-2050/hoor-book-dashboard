@@ -543,7 +543,10 @@ export default {
             city_id: this.admin.city_id,
           })
           .then((res) => {
-            if (res.data.status.status) {
+            if (res.data && res.data.status && !res.data.status.status) {
+              this.showNotification(res.data.status.validation_message);
+            }
+            else {
               this.showNotification("تمت العملية بنجاح");
               this.fetch();
               this.alert.type = "warning";
@@ -558,9 +561,6 @@ export default {
                 city_id: "",
               };
             }
-            else {
-              this.showNotification(res.data.status.validation_message);
-            }
           })
           .catch(({ response }) => {
             this.errors = response.data.errors;
@@ -569,7 +569,10 @@ export default {
         this.$http
           .post(`${this.baseApi}/api/admin/areas`, formdata)
           .then((res) => {
-            if (res.data.status.status) {
+            if (res.data && res.data.status && !res.data.status.status) {
+              this.showNotification(res.data.status.validation_message);
+            }
+            else {
               this.showNotification("تمت العملية بنجاح");
               this.fetch();
               this.alert.type = "info";
@@ -583,9 +586,6 @@ export default {
                 cost: null,
                 city_id: "",
               };
-            }
-            else {
-              this.showNotification(res.data.status.validation_message);
             }
           })
           .catch(({ response }) => {
