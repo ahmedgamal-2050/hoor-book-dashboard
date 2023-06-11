@@ -153,15 +153,6 @@
                       </v-col>
 
                       <v-col class="pa-2" cols="12" lg="4" sm="6">
-                        <VTextFieldWithValidation
-                          label="الإسم بالعربي"
-                          v-model="filter.name_ar"
-                          prepend-icon="lock"
-                          type="text"
-                        />
-                      </v-col>
-
-                      <v-col class="pa-2" cols="12" lg="4" sm="6">
                         <VSelectWithValidation
                           label="الفئة"
                           :items="category_ids"
@@ -364,7 +355,6 @@ export default {
     },
     filter: {
       name: "",
-      name_ar: "",
       parent_id: "",
     },
     panel: [ 0 ],
@@ -517,7 +507,6 @@ export default {
       this.isFiltering = false;
       this.filter = {
         name: "",
-        name_ar: "",
         parent_id: "",
       };
     },
