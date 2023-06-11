@@ -324,13 +324,16 @@
 
         <template v-slot:[`item.notes`]="{ item }">
           <div class="py-3">
-            <div v-if="item.notes != null">
-              <b>الملاحظات: </b><span>{{ item.notes }}</span>
+            <div>
+              <b>الملاحظات: </b>
+              <div v-if="item.notes != null">{{ item.notes }}</div>
+              <v-chip v-else small color="secondary" dark>غير متوفر</v-chip>
             </div>
-            <div v-if="item.Cancel_reason != null">
-              <b>سبب الإلغاء: </b><span>{{ item.Cancel_reason }}</span>
+            <div>
+              <b>سبب الإلغاء: </b>
+              <div v-if="item.Cancel_reason != null">{{ item.Cancel_reason }}</div>
+              <v-chip v-else small color="secondary" dark>غير متوفر</v-chip>
             </div>
-            <v-chip v-else small color="secondary" dark>غير متوفر</v-chip>
           </div>
         </template>
 
