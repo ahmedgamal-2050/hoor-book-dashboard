@@ -273,12 +273,14 @@
                             item-text="code"
                             item-value="id"
                             prepend-icon="lock"
+                            class="w-100"
                             v-model="color.color_id" 
                             :key="index"
+                            @click="getColorCode(color.color_id)"
                           />
-                          {{ getColorCode(color.color_id) }}
-                          <div v-if="color.color_id">
-                            <span :style="{'background': getColorCode(color.color_id)}" style="width: 16px; height: 16px; margin-inline: 5px; display: inline-block; border-radius: 4px;"></span>
+                          {{ color_code }}
+                          <div v-if="color_code">
+                            <span :style="{'background': color_code}" style="width: 16px; height: 16px; margin-inline: 5px; display: inline-block; border-radius: 4px;"></span>
                           </div>
                         </div>
 
@@ -794,6 +796,7 @@ export default {
     showColorMediaError: false,
     baseApi: window.location.origin,
     baseApi: BASE_API,
+    color_code: null,
   }),
   components: {
     VTextFieldWithValidation,
@@ -1175,11 +1178,12 @@ export default {
     },
     getColorCode(codeId) {
       if (codeId) {
-        return this.color_ids.find((item) => { 
+        let color = this.color_ids.find((item) => { 
           if (item.id == codeId) {
-            item.code;
+            return item;
           }
         })
+        this.color_code = color.code;
       }
       else {
         return null;
