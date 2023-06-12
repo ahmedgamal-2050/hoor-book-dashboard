@@ -138,6 +138,7 @@
                     v-model="admin.offer"
                     prepend-icon="lock"
                     type="number"
+                    rules="required"
                   />
                   
                   <VSelectWithValidation
@@ -264,16 +265,22 @@
                           type="number"
                         />
 
-                        <VSelectWithValidation
-                          label="الألوان #"
-                          rules="required"
-                          :items="color_ids"
-                          item-text="code"
-                          item-value="id"
-                          prepend-icon="lock"
-                          v-model="color.color_id" 
-                          :key="index"
-                        />
+                        <div class="d-flex">
+                          <VSelectWithValidation
+                            label="الألوان #"
+                            rules="required"
+                            :items="color_ids"
+                            item-text="code"
+                            item-value="id"
+                            prepend-icon="lock"
+                            v-model="color.color_id" 
+                            :key="index"
+                          />
+                          {{ getColorCode(color.color_id) }}
+                          <div v-if="color.color_id">
+                            <span :style="{'background': getColorCode(color.color_id)}" style="width: 16px; height: 16px; margin-inline: 5px; display: inline-block; border-radius: 4px;"></span>
+                          </div>
+                        </div>
 
                         <!-- Color Media Field List -->
                         <div class="d-flex align-items-center">
@@ -1014,9 +1021,9 @@ export default {
       }
       if (this.admin.colors && this.admin.colors.length > 0) {
         for (var i = 0; i < this.admin.colors.length; i++) {
-          formdata.append(`colors.${i}.color_id`, this.admin.colors[i].color_id);
-          formdata.append(`colors.${i}.stock`, this.admin.colors[i].stock);
-          if (this.admin.colors[i].media) formdata.append(`colors.${i}.media`, this.admin.colors[i].media);
+          formdata.append(`colors[][color_id]`, this.admin.colors[i].color_id);
+          formdata.append(`colors[][stock]`, this.admin.colors[i].stock);
+          if (this.admin.colors[i].media) formdata.append(`colors[][media]`, this.admin.colors[i].media);
         }
       }
 
@@ -1165,6 +1172,18 @@ export default {
           });
         }
       });
+    },
+    getColorCode(codeId) {
+      if (codeId) {
+        return this.color_ids.find((item) => { 
+          if (item.id == codeId) {
+            item.code;
+          }
+        })
+      }
+      else {
+        return null;
+      }
     },
     addMedia: function (item) {
       if (!item) {
