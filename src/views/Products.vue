@@ -1024,9 +1024,7 @@ export default {
       }
       if (this.admin.colors && this.admin.colors.length > 0) {
         for (var i = 0; i < this.admin.colors.length; i++) {
-          formdata.append(`colors[][color_id]`, this.admin.colors[i].color_id);
-          formdata.append(`colors[][stock]`, this.admin.colors[i].stock);
-          if (this.admin.colors[i].media) formdata.append(`colors[][media]`, this.admin.colors[i].media);
+          formdata.append(`colors[]`, this.admin.colors[ i ]);
         }
       }
 
@@ -1183,7 +1181,7 @@ export default {
             return item;
           }
         })
-        this.color_code = color.code;
+        this.color_code = color
       }
       else {
         return null;
