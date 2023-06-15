@@ -99,35 +99,48 @@
             <v-card-text v-if="order_meta && order_meta.length > 0">
               <div v-for="order in order_meta">
                 <hr/>
-                <div class="mt-3 mb-3">
-                  <b>كود اللون: </b>
-                  {{ order.color.code }}
-                  <span :style="{'background': order.color.code}" style="width: 16px; height: 16px; margin-inline: 5px; display: inline-block; border-radius: 4px;"></span>
+                <div v-if="order.product">
+                  <div class="mt-3 mb-3">
+                    <b>إسم المنتج: </b>
+                    {{ order.product.name }}
+                  </div>
+                  <div class="mb-3">
+                    <b>إسم المنتج بالعربي: </b>
+                    {{ order.product.name_ar }}
+                  </div>
+                  <div class="mb-3">
+                    <b>صورة المنتج: </b>
+                    <span>
+                      <a :href="`${baseApi}/${order.product.image}`" target="_blank">
+                        <img
+                          :src="`${baseApi}/${order.product.image}`" class="of-contain"
+                          alt="صورة الفئة"
+                        />
+                      </a>
+                    </span>
+                  </div> 
+                  <div class="mb-3">
+                    <b>كود الفئة التابع لها: </b>
+                    {{ order.product.category_id }}
+                  </div>                  
                 </div>
                 <div class="mb-3">
-                  <b>السعر المنتج: </b>
-                  <span class="text-decoration-line-through">{{ order.price_before_discount }}</span>
-                  <span class="green--text font-weight-bold mx-2">{{ order.price_after_discount }}</span>
+                  <b>اللون المطلوب: </b>
+                  {{ order.color_id ? order.color : 'لا يوجد لون لهذا المنتج' }}
+                </div> 
+                <div class="mb-3">
+                  <b>العدد المطلوب: </b>
+                  {{ order.qty }}
                 </div>
                 <div class="mb-3">
-                  <b>إسم المنتج: </b>
-                  {{ order.product.name }}
+                  <b>نوع الطلب: </b>
+                  {{ order.product_type == 'Piece' ? 'قطعة' : 'دستة' }}
                 </div>
                 <div class="mb-3">
-                  <b>إسم المنتج بالعربي: </b>
-                  {{ order.product.name_ar }}
-                </div>
-                <div class="mb-3">
-                  <b>صورة المنتج: </b>
-                  <span>
-                    <a :href="`${baseApi}/${order.product.image}`" target="_blank">
-                      <img
-                        :src="`${baseApi}/${order.product.image}`" class="of-contain"
-                        alt="صورة الفئة"
-                      />
-                    </a>
-                  </span>
-                </div>
+                  <b>الاجمالي: </b>
+                  {{ order.price_after_discount }}
+                </div>  
+
               </div>
             </v-card-text>
             <v-card-actions>
@@ -288,17 +301,6 @@
         </template>
 
         <template v-slot:[`item.user_address`]="{ item }">
-          <!-- 
-            area: {id: 2, name: "Dokki", name_ar: "الدقي", city_id: 2, created_at: "2023-05-26T17:51:55.000000Z",…}
-            area_id
-            city: {id: 2, name: "city", name_ar: "مدينة", governorate_id: 2, created_at: "2023-05-26T17:30:45.000000Z",…}
-            city_id
-            governorate: {id: 2, name: "Tantaa", name_ar: "طنطاا", created_at: "2023-05-26T13:12:53.000000Z",…}
-            governorate_id
-            latitude
-            longitude
-            phone_verified_at
-          -->
           <div class="py-3">
             <div v-if="item.user_address.id != null">
               <b># العنوان: </b><span>{{ item.user_address.id }}</span>
@@ -529,7 +531,7 @@ export default {
 
           this.$http.get(endpoint).then((res) => {
             let items = res.data.data;
-            //console.log('getDataFromApi items >>', items);
+            console.log('getDataFromApi items >>', items);
             let meta = res.data;
             this.loading = false;
             resolve({
