@@ -119,9 +119,9 @@
                       </a>
                     </span>
                   </div> 
-                  <div class="mb-3">
-                    <b>كود الفئة التابع لها: </b>
-                    {{ order.product.category_id }}
+                  <div class="mb-3" v-if="order.product.category">
+                    <b>اسم الفئة التابع لها: </b>
+                    {{ order.product.category.name_ar }}
                   </div>                  
                 </div>
                 <div class="mb-3">
