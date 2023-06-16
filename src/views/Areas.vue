@@ -140,15 +140,6 @@
                           type="text"
                         />
                       </v-col>
-
-                      <v-col class="pa-2" cols="12" lg="4" sm="6">
-                        <VTextFieldWithValidation
-                          label="الإسم بالعربي"
-                          v-model="filter.name_ar"
-                          prepend-icon="lock"
-                          type="text"
-                        />
-                      </v-col>
                     </v-row>      
                   </v-card-text>
 
@@ -321,7 +312,6 @@ export default {
     },
     filter: {
       name: "",
-      name_ar: "",
     },
     panel: [ 0 ],
     isFiltering: false,
@@ -452,7 +442,6 @@ export default {
       return new Promise((resolve) => {
         let endpoint = `${this.baseApi}/api/admin/areas?page=${this.page}`;
         if (this.filter.name != '') endpoint += `&name=${this.filter.name}`;
-        if (this.filter.name_ar != '') endpoint += `&name_ar=${this.filter.name_ar}`;
 
         this.$http.get(endpoint).then((res) => {
           let items = res.data.data;
@@ -476,7 +465,6 @@ export default {
       this.isFiltering = false;
       this.filter = {
         name: "",
-        name_ar: "",
       };
     },
     getCitiesIds(res = null) {

@@ -110,65 +110,6 @@
         <!-- end Add action -->
       </v-toolbar>
 
-      <!-- Filter -->
-      <div class="pa-3">
-        <v-expansion-panels v-model="panel" multiple>
-          <v-expansion-panel>
-            <v-expansion-panel-header>
-              فلتر
-            </v-expansion-panel-header>
-            <v-expansion-panel-content>
-              <ValidationObserver
-                ref="obs"
-                v-slot="{ handleSubmit }">
-                <form
-                  ref="filterForm"
-                  @submit.prevent="handleSubmit(fetchFilter)">
-                  <v-card-text>
-                    <v-row
-                      align="center"
-                      no-gutters
-                    >
-                      <v-col class="pa-2" cols="12" lg="4" sm="6">
-                        <VTextFieldWithValidation
-                          label="الكود"
-                          v-model="filter.code"
-                          prepend-icon="lock"
-                          type="text"
-                        />
-                      </v-col>
-
-                      <v-col class="pa-2" cols="12" lg="4" sm="6">
-                        <VSelectWithValidation
-                          label="النوع"
-                          v-model="filter.type"
-                          prepend-icon="lock"
-                          :items="['fixed', 'percentage']"  
-                        />
-                      </v-col>
-                    </v-row>      
-                  </v-card-text>
-
-                  <v-card-actions>
-                    <v-btn
-                      type="submit"
-                      color="primary">
-                      فلتر
-                    </v-btn>
-                    
-                    <v-btn
-                      @click="clearFilter"
-                      color="secondary">
-                      مسح الفلتر
-                    </v-btn>
-                  </v-card-actions>
-                </form>
-              </ValidationObserver>
-            </v-expansion-panel-content>
-          </v-expansion-panel>
-        </v-expansion-panels>
-      </div>
-
       <v-data-table
         loading-text="انتظر قليلا..."
         :headers="headers"

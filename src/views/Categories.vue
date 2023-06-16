@@ -69,7 +69,7 @@
                     <span v-if="admin.view_image === null || admin.view_image === ''">لا يوجد صورة</span>
                     <div v-else-if="typeof admin.view_image === 'object'"></div>
 
-                    <a v-else :href="`${baseUrl}/${admin.view_image}`" target="_blank">
+                    <a v-else :href="`${baseApi}/${admin.view_image}`" target="_blank">
                       <img class="of-contain"
                         :src="`${baseApi}/${admin.view_image}`"
                         alt="صورة المنتج"
@@ -481,7 +481,6 @@ export default {
       return new Promise((resolve) => {
         let endpoint = `${this.baseApi}/api/admin/categories?page=${this.page}`;
         if (this.filter.name != '') endpoint += `&name=${this.filter.name}`;
-        if (this.filter.name_ar != '') endpoint += `&name_ar=${this.filter.name_ar}`;
         if (this.filter.parent_id != null) endpoint += `&parent_id=${this.filter.parent_id}`;
 
         this.$http.get(endpoint).then((res) => {
@@ -597,7 +596,8 @@ export default {
             this.errors = response.data.errors;
             this.connecting = false;
           });
-      } else {
+      }
+      else {
         this.$http
           .post(`${this.baseApi}/api/admin/categories`, formdata)
           .then((res) => {

@@ -136,7 +136,7 @@
                   </div>
 
                   <VTextFieldWithValidation
-                    rules="required|regex:^[0-9]*$"
+                    rules="regex:^[0-9]*$"
                     label="الخصم"
                     v-model="admin.offer"
                     prepend-icon="lock"
@@ -386,7 +386,7 @@
                 <v-card-actions>
                   <v-btn
                     type="submit"
-                    :disabled="invalid || !validated || connecting"
+                    :disabled="invalid || connecting"
                     :loading="connecting"
                     color="primary">حفظ
                   </v-btn>
@@ -961,7 +961,6 @@ export default {
     editing(process, item = this.admin) {
       if (process === "add") {
         this.addMedia();
-        this.addColor();
         this.$nextTick(() => {
           this.$refs.obs.reset();
         });
@@ -995,13 +994,10 @@ export default {
           }
         }
         if (item.colors && item.colors.length > 0) {
-          console.log('color >>', item.colors);
           for (var i = 0; i < item.colors.length; i++) {
-            console.log('color i >>', item.colors[i]);
             this.addColor(item.colors[i]);
-            if (item.colors[i].media && item.colors[i].media.length > 0) {
-              console.log('color i media >>', item.colors[i].media);
-              this.addColorMedia(i, item.colors[i].media);
+            if (item.media && item.media.length > 0 && item.colors[i].media && item.colors[i].media.length > 0) {
+              this.addColorMedia(i, item.colors[i].media, item.media);
             }
           }
         }
@@ -1036,7 +1032,7 @@ export default {
             if (object.hasOwnProperty(key)) {
               if (key == 'media') {
                 for (var x = 0; x < object[key].length; x++) {
-                  formdata.append('colors[' + i + '][media[]]', object[key][x].value);
+                  formdata.append('colors[' + i + '][media]['+ x +']', object[key][x].value);
                 }
               }
               else {
@@ -1204,10 +1200,12 @@ export default {
         });
       }
       else {
-        this.admin.media.push({
-          value: "",
-          view_image: item.image
-        });
+        if (!item.color_id) {
+          this.admin.media.push({
+            value: "",
+            view_image: item.image
+          });
+        }
       }
       this.showMediaError = false;
     },
@@ -1234,19 +1232,20 @@ export default {
           {
             color_id: item.id,
             stock: item.stock,
-            media: item.media
+            media: []
           }
         );
       }
       this.showColorError = false;
     },
-    addColorMedia: function (index, item) {
+    addColorMedia: function (index, item, media) {
       if (!item) {
         this.admin.colors[index].media.push({ value: '' });
       }
       else {
-        console.log('color media item >>', item);
-        this.admin.colors[index].media.push({ value: item });
+        for (let i = 0; i < item.length; i++) {
+          this.admin.colors[index].media.push({ view_image: media[item[i]].image });
+        }
       }
       this.showColorError = false;
     },
