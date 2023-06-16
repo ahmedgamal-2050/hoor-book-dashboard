@@ -374,7 +374,6 @@ export default {
             if (error.message.includes('code 401')) {
               console.log('auth error >>');
               this.$router.push({ path: '/auth/login' })
-              this.connecting = false;
             }
           });
         }
@@ -463,17 +462,24 @@ export default {
         this.$http
           .put(endpoint, { name: this.admin.name, name_ar: this.admin.name_ar })
           .then((res) => {
-            this.showNotification("تمت العملية بنجاح");
-            this.fetch();
-            this.alert.type = "warning";
-            this.alert.message = "Edit user done";
-            this.close();
-            this.errors = [];
-            this.admin = {
-              id: null,
-              name: "",
-              name_ar: "",
-            };
+            if (res.data && res.data.status && !res.data.status.status) {
+              this.showNotification(res.data.status.validation_message);
+              this.connecting = false;
+            }
+            else {
+              this.showNotification("تمت العملية بنجاح");
+              this.fetch();
+              this.alert.type = "warning";
+              this.alert.message = "Edit user done";
+              this.close();
+              this.errors = [];
+              this.admin = {
+                id: null,
+                name: "",
+                name_ar: "",
+              };
+              this.connecting = false;
+            }
           })
           .catch(({ response }) => {
             this.errors = response.data.errors;
@@ -483,17 +489,24 @@ export default {
         this.$http
           .post(`${this.baseApi}/api/admin/shipping-companies`, formdata)
           .then((res) => {
-            this.showNotification("تمت العملية بنجاح");
-            this.fetch();
-            this.alert.type = "info";
-            this.alert.message = "Add user done!";
-            this.close();
-            this.errors = [];
-            this.admin = {
-              id: null,
-              name: "",
-              name_ar: "",
-            };
+            if (res.data && res.data.status && !res.data.status.status) {
+              this.showNotification(res.data.status.validation_message);
+              this.connecting = false;
+            }
+            else {
+              this.showNotification("تمت العملية بنجاح");
+              this.fetch();
+              this.alert.type = "info";
+              this.alert.message = "Add user done!";
+              this.close();
+              this.errors = [];
+              this.admin = {
+                id: null,
+                name: "",
+                name_ar: "",
+              };
+              this.connecting = false;
+            }
           })
           .catch(({ response }) => {
             this.errors = response.data.errors;

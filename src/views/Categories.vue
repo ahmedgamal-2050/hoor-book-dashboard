@@ -457,7 +457,6 @@ export default {
             if (error.message.includes('code 401')) {
               console.log('auth error >>');
               this.$router.push({ path: '/auth/login' })
-              this.connecting = false;
             }
           });
         }
@@ -592,7 +591,6 @@ export default {
                 parent_id: "",
               };
               this.connecting = false;
-              this.connecting = false;
             }
           })
           .catch(({ response }) => {
@@ -622,7 +620,6 @@ export default {
                 view_image: "",
                 parent_id: "",
               };
-              this.connecting = false;
               this.connecting = false;
             }
           })

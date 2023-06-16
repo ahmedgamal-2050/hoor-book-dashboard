@@ -542,7 +542,6 @@ export default {
             if (error.message.includes('code 401')) {
               //console.log('auth error >>');
               this.$router.push({ path: '/auth/login' })
-              this.connecting = false;
             }
           });
         }
@@ -663,39 +662,25 @@ export default {
             payment_status: this.admin.payment_status,
           })
           .then((res) => {
-            this.showNotification("تمت العملية بنجاح");
-            this.fetch();
-            this.alert.type = "warning";
-            this.alert.message = "Edit user done";
-            this.close();
-            this.errors = [];
-            this.admin = {
-              id: null,
-              status: "",
-              shipping_companies_id: "",
-              payment_status: "",
-            };
-          })
-          .catch(({ response }) => {
-            this.errors = response.data.errors;
-            this.connecting = false;
-          });
-      } else {
-        this.$http
-          .post(`${this.baseApi}/api/admin/orders`, formdata)
-          .then((res) => {
-            this.showNotification("تمت العملية بنجاح");
-            this.fetch();
-            this.alert.type = "info";
-            this.alert.message = "Add user done!";
-            this.close();
-            this.errors = [];
-            this.admin = {
-              id: null,
-              status: "",
-              shipping_companies_id: "",
-              payment_status: "",
-            };
+            if (res.data && res.data.status && !res.data.status.status) {
+              this.showNotification(res.data.status.validation_message);
+              this.connecting = false;
+            }
+            else {
+              this.showNotification("تمت العملية بنجاح");
+              this.fetch();
+              this.alert.type = "warning";
+              this.alert.message = "Edit user done";
+              this.close();
+              this.errors = [];
+              this.admin = {
+                id: null,
+                status: "",
+                shipping_companies_id: "",
+                payment_status: "",
+              };
+              this.connecting = false;
+            }
           })
           .catch(({ response }) => {
             this.errors = response.data.errors;

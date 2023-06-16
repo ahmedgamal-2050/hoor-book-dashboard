@@ -875,7 +875,6 @@ export default {
             if (error.message.includes('code 401')) {
               //console.log('auth error >>');
               this.$router.push({ path: '/auth/login' })
-              this.connecting = false;
             }
           });
         }
@@ -896,7 +895,6 @@ export default {
             if (error.message.includes('code 401')) {
               //console.log('auth error >>');
               this.$router.push({ path: '/auth/login' })
-              this.connecting = false;
             }
           });
         }
@@ -1084,11 +1082,9 @@ export default {
                 colors: []
               };
               this.connecting = false;
-              this.connecting = false;
             }
           })
           .catch(({ response }) => {
-            this.connecting = false;
             this.errors = response.data.errors;
             this.connecting = false;
           });
@@ -1125,7 +1121,6 @@ export default {
                 media: [],
                 colors: []
               };
-              this.connecting = false;
               this.connecting = false;
             }
           })
