@@ -59,59 +59,61 @@
                     type="text"
                   />
 
-                  <VTextFieldWithValidation
+                  <VTextAreaWithValidation
                     rules="required"
                     v-model="admin.desc"
                     label="الوصف"
-                    prepend-icon="mail"
+                    rows="2"
+                    prepend-icon="lock"
                   />
-
+                  
                   <VTextFieldWithValidation
-                    rules="required"
+                    rules="required|regex:^[0-9]*$"
                     label="المخزون"
                     v-model="admin.stock"
                     prepend-icon="lock"
-                    type="number"
+                    hide-spin-buttons
+                    type="text"
                   />
 
                   <VTextFieldWithValidation
-                    rules="required"
-                    label=" سعر  القطعة للمستخدم"
+                    rules="required|regex:^[0-9.]*$"
+                    label="سعر القطعة للمستخدم"
                     v-model="admin.user_price_of_piece"
                     prepend-icon="lock"
-                    type="number"
+                    type="text"
                   />
 
                   <VTextFieldWithValidation
-                    rules="required"
+                    rules="required|regex:^[0-9.]*$"
                     label="سعر القطعة للمكتبة"
                     v-model="admin.library_price_of_piece"
                     prepend-icon="lock"
-                    type="number"
+                    type="text"
                   />
 
                   <VTextFieldWithValidation
-                    rules="required"
+                    rules="required|regex:^[0-9]*$"
                     label="عدد الرزم"
                     v-model="admin.packet_pieces"
                     prepend-icon="lock"
-                    type="number"
+                    type="text"
                   />
 
                   <VTextFieldWithValidation
-                    rules="required"
+                    rules="required|regex:^[0-9.]*$"
                     label="سعر الرزمة للمستخدم"
                     v-model="admin.user_price_of_packet"
                     prepend-icon="lock"
-                    type="number"
+                    type="text"
                   />
 
                   <VTextFieldWithValidation
-                    rules="required"
+                    rules="required|regex:^[0-9.]*$"
                     label="سعر الرزمة للمكتبة"
                     v-model="admin.library_price_of_packet"
                     prepend-icon="lock"
-                    type="number"
+                    type="text"
                   />
                   
                   <VFileInputWithValidation
@@ -125,7 +127,7 @@
                     <span v-if="admin.view_image === null || admin.view_image === ''">لا يوجد صورة</span>
                     <div v-else-if="typeof admin.view_image === 'object'"></div>
 
-                    <a v-else :href="`${baseUrl}/${admin.view_image}`" target="_blank">
+                    <a v-else :href="`${baseApi}/${admin.view_image}`" target="_blank">
                       <img class="of-contain"
                         :src="`${baseApi}/${admin.view_image}`"
                         alt="صورة المنتج"
@@ -134,11 +136,11 @@
                   </div>
 
                   <VTextFieldWithValidation
+                    rules="required|regex:^[0-9]*$"
                     label="الخصم"
                     v-model="admin.offer"
                     prepend-icon="lock"
-                    type="number"
-                    rules="required"
+                    type="text"
                   />
                   
                   <VSelectWithValidation
@@ -257,17 +259,17 @@
                       <!-- Color Field Item -->
                       <div class="w-100">
                         <VTextFieldWithValidation
-                          rules="required"
+                          rules="required|regex:^[0-9]*$"
                           prepend-icon="lock"
                           v-model="color.stock" 
                           :key="index"
                           label="المخزون"
-                          type="number"
+                          type="text"
                         />
 
-                        <div class="d-flex">
+                        <div class="d-flex align-items-center">
                           <VSelectWithValidation
-                            label="الألوان #"
+                            label="الألوان"
                             rules="required"
                             :items="color_ids"
                             item-text="code"
@@ -276,10 +278,9 @@
                             class="w-100"
                             v-model="color.color_id" 
                             :key="index"
-                            @click="getColorCode(color.color_id)"
+                            @change="getColorCode(color.color_id)"
                           />
-                          {{ color_code }}
-                          <div v-if="color_code">
+                          <div class="pr-2" v-if="color_code">
                             <span :style="{'background': color_code}" style="width: 16px; height: 16px; margin-inline: 5px; display: inline-block; border-radius: 4px;"></span>
                           </div>
                         </div>
@@ -321,7 +322,7 @@
                                   <span v-if="med.view_image === null || med.view_image === ''">لا يوجد صورة</span>
                                   <div v-else-if="typeof med.view_image === 'object'"></div>
 
-                                  <a v-else :href="`${baseUrl}/${med.view_image}`" target="_blank">
+                                  <a v-else :href="`${baseApi}/${med.view_image}`" target="_blank">
                                     <img class="of-contain"
                                       :src="`${baseApi}/${med.view_image}`"
                                       alt="صورة المنتج"
@@ -385,11 +386,10 @@
                 <v-card-actions>
                   <v-btn
                     type="submit"
-                    :disabled="invalid || !validated"
+                    :disabled="invalid || !validated || connecting"
                     :loading="connecting"
-                    color="primary"
-                    >حفظ</v-btn
-                  >
+                    color="primary">حفظ
+                  </v-btn>
                   <v-btn @click="close" color="secondary">إغلاق</v-btn>
                 </v-card-actions>
               </form>
@@ -501,7 +501,6 @@
                   <v-card-actions>
                     <v-btn
                       type="submit"
-                      :loading="connecting"
                       color="primary">
                       فلتر
                     </v-btn>
@@ -720,6 +719,8 @@ const headerConst = { align: "center", sortable: false };
 import VTextFieldWithValidation from "../components/inputs/VTextFieldWithValidation";
 import VFileInputWithValidation from "../components/inputs/VFileInputWithValidation";
 import VSelectWithValidation from "../components/inputs/VSelectWithValidation";
+import VTextAreaWithValidation from "../components/inputs/VTextAreaWithValidation";
+
 import { mapActions } from "vuex";
 import { BASE_API } from "../config/config";
 
@@ -802,6 +803,7 @@ export default {
     VTextFieldWithValidation,
     VFileInputWithValidation,
     VSelectWithValidation,
+    VTextAreaWithValidation,
   },
   computed: {
     formTitle() {
@@ -972,31 +974,35 @@ export default {
         });
       }
       this.dialog = !this.dialog;
-      this.admin.id = item.id;
-      this.admin.name = item.name;
-      this.admin.name_ar = item.name_ar;
-      this.admin.desc = item.desc;
-      this.admin.stock = item.stock;
-      this.admin.user_price_of_piece = item.user_price_of_piece;
-      this.admin.library_price_of_piece = item.library_price_of_piece;
-      this.admin.packet_pieces = item.packet_pieces;
-      this.admin.user_price_of_packet = item.user_price_of_packet;
-      this.admin.library_price_of_packet = item.library_price_of_packet;
-      this.admin.offer = item.offer;
-      this.admin.view_image = item.image;
-      this.admin.image = "";
-      this.admin.category_id = item.category.id;
-      if (item.media && item.media.length > 0) {
-        for (var i = 0; i < item.media.length; i++) {
-          this.addMedia(item.media[i]);
+      if (item) {
+        this.admin.id = item.id;
+        this.admin.name = item.name;
+        this.admin.name_ar = item.name_ar;
+        this.admin.desc = item.desc;
+        this.admin.stock = item.stock;
+        this.admin.user_price_of_piece = item.user_price_of_piece;
+        this.admin.library_price_of_piece = item.library_price_of_piece;
+        this.admin.packet_pieces = item.packet_pieces;
+        this.admin.user_price_of_packet = item.user_price_of_packet;
+        this.admin.library_price_of_packet = item.library_price_of_packet;
+        this.admin.offer = item.offer;
+        this.admin.view_image = item.image;
+        this.admin.image = "";
+        this.admin.category_id = item.category.id;
+        if (item.media && item.media.length > 0) {
+          for (var i = 0; i < item.media.length; i++) {
+            this.addMedia(item.media[i]);
+          }
         }
-      }
-      if (item.colors && item.colors.length > 0) {
-        for (var i = 0; i < item.colors.length; i++) {
-          this.addColor(item.colors[i]);
-          //console.log('color media >>', item.colors[i].media);
-          if (item.colors[i].media && item.colors[i].media.length > 0) {
-            this.addColorMedia(i, item.colors[i].media);
+        if (item.colors && item.colors.length > 0) {
+          console.log('color >>', item.colors);
+          for (var i = 0; i < item.colors.length; i++) {
+            console.log('color i >>', item.colors[i]);
+            this.addColor(item.colors[i]);
+            if (item.colors[i].media && item.colors[i].media.length > 0) {
+              console.log('color i media >>', item.colors[i].media);
+              this.addColorMedia(i, item.colors[i].media);
+            }
           }
         }
       }
@@ -1007,13 +1013,13 @@ export default {
       if (this.admin.name) formdata.append("name", this.admin.name);
       if (this.admin.name_ar) formdata.append("name_ar", this.admin.name_ar);
       if (this.admin.desc) formdata.append("desc", this.admin.desc);
-      if (this.admin.stock) formdata.append("stock", this.admin.stock);
-      if (this.admin.user_price_of_piece) formdata.append("user_price_of_piece", this.admin.user_price_of_piece);
-      if (this.admin.library_price_of_piece) formdata.append("library_price_of_piece", this.admin.library_price_of_piece);
-      if (this.admin.packet_pieces) formdata.append("packet_pieces", this.admin.packet_pieces);
-      if (this.admin.user_price_of_packet) formdata.append("user_price_of_packet", this.admin.user_price_of_packet);
-      if (this.admin.library_price_of_packet) formdata.append("library_price_of_packet", this.admin.library_price_of_packet);
-      if (this.admin.offer) formdata.append("offer", this.admin.offer);
+      if (this.admin.stock) formdata.append("stock", Number(this.admin.stock));
+      if (this.admin.user_price_of_piece) formdata.append("user_price_of_piece", Number(this.admin.user_price_of_piece));
+      if (this.admin.library_price_of_piece) formdata.append("library_price_of_piece", Number(this.admin.library_price_of_piece));
+      if (this.admin.packet_pieces) formdata.append("packet_pieces", Number(this.admin.packet_pieces));
+      if (this.admin.user_price_of_packet) formdata.append("user_price_of_packet", Number(this.admin.user_price_of_packet));
+      if (this.admin.library_price_of_packet) formdata.append("library_price_of_packet", Number(this.admin.library_price_of_packet));
+      if (this.admin.offer) formdata.append("offer", Number(this.admin.offer));
       if (this.admin.image) formdata.append("image", this.admin.image);
       if (this.admin.category_id) formdata.append("category_id", this.admin.category_id);
       //if (this.admin.media) formdata.append("media[]", this.admin.media);
@@ -1024,36 +1030,30 @@ export default {
       }
       if (this.admin.colors && this.admin.colors.length > 0) {
         for (var i = 0; i < this.admin.colors.length; i++) {
-          formdata.append(`colors[]`, this.admin.colors[ i ]);
+          //formdata.append(`colors[]`, this.admin.colors[ i ]);
+          var object = this.admin.colors[i];
+          for (var key in object) {
+            if (object.hasOwnProperty(key)) {
+              if (key == 'media') {
+                for (var x = 0; x < object[key].length; x++) {
+                  formdata.append('colors[' + i + '][media[]]', object[key][x].value);
+                }
+              }
+              else {
+                formdata.append('colors[' + i + '][' + key + ']', object[key]);
+              }
+            }
+          }
         }
       }
 
       if (this.edit) {
         let endpoint = `${this.baseApi}/api/admin/products/${this.admin.id}`;
-        let media = [];
-        if (this.admin.media && this.admin.media.length > 0) {
-          media = this.admin.media.map((item) => item.value);
-          //console.log('edit media >>', media);
-        }
         
         this.$http
-          .post(endpoint, {
-            name: this.admin.name,
-            name_ar: this.admin.name_ar,
-            desc: this.admin.desc,
-            stock: this.admin.stock,
-            user_price_of_piece: this.admin.user_price_of_piece,
-            library_price_of_piece: this.admin.library_price_of_piece,
-            packet_pieces: this.admin.packet_pieces,
-            user_price_of_packet: this.admin.user_price_of_packet,
-            library_price_of_packet: this.admin.library_price_of_packet,
-            offer: (this.admin.offer) ? this.admin.offer : null,
-            image: this.admin.image,
-            category_id: this.admin.category_id,
-            media: media,
-            colors: (this.admin.colors && this.admin.colors.length > 0) ? this.admin.colors : null,
-          })
+          .post(endpoint, formdata)
           .then((res) => {
+            this.connecting = false;
             this.showNotification("تمت العملية بنجاح");
             this.fetch();
             this.alert.type = "warning";
@@ -1079,6 +1079,7 @@ export default {
             };
           })
           .catch(({ response }) => {
+            this.connecting = false;
             this.errors = response.data.errors;
           });
       }
@@ -1113,13 +1114,14 @@ export default {
                 media: [],
                 colors: []
               };
+              this.connecting = false;
             }
           })
           .catch(({ response }) => {
             this.errors = response.data.errors;
+            this.connecting = false;
           });
       }
-      this.connecting = false;
     },
     deleteItem(item) {
       // const index = this.requests.indexOf(item);
@@ -1181,7 +1183,7 @@ export default {
             return item;
           }
         })
-        this.color_code = color
+        this.color_code = color.code;
       }
       else {
         return null;
@@ -1231,6 +1233,16 @@ export default {
       }
       this.showColorError = false;
     },
+    addColorMedia: function (index, item) {
+      if (!item) {
+        this.admin.colors[index].media.push({ value: '' });
+      }
+      else {
+        console.log('color media item >>', item);
+        this.admin.colors[index].media.push({ value: item });
+      }
+      this.showColorError = false;
+    },
     deleteColor: function (index) {
       this.admin.colors.splice(index, 1);
       if (this.admin.colors.length < 1) {
@@ -1239,16 +1251,6 @@ export default {
       else {
         this.showColorError = false;
       }
-    },
-    addColorMedia: function (index, item) {
-      if (!item) {
-        this.admin.colors[index].media.push({ value: '' });
-      }
-      else {
-        //console.log('color media item >>', item);
-        this.admin.colors[index].media.push({ value: item });
-      }
-      this.showColorError = false;
     },
     deleteColorMedia: function (colorIndex, mediaIndex) {
       this.admin.colors[colorIndex].media.splice(mediaIndex, 1);

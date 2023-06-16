@@ -67,11 +67,11 @@
                   />
 
                   <VTextFieldWithValidation
-                    rules="required"
+                    rules="required|regex:^[0-9]*$"
                     v-model="admin.cost"
                     label="التكلفة"
                     prepend-icon="money"
-                    type="number"
+                    type="text"
                   />
                 </v-card-text>
                 <v-card-actions>
@@ -530,7 +530,7 @@ export default {
       let formdata = new FormData();
       if (this.admin.name) formdata.append("name", this.admin.name);
       if (this.admin.name_ar) formdata.append("name_ar", this.admin.name_ar);
-      if (this.admin.cost) formdata.append("cost", this.admin.cost);
+      if (this.admin.cost) formdata.append("cost", Number(this.admin.cost));
       if (this.admin.city_id) formdata.append("city_id", this.admin.city_id);
 
       if (this.edit) {
@@ -539,7 +539,7 @@ export default {
           .put(endpoint, {
             name: this.admin.name,
             name_ar: this.admin.name_ar,
-            cost: this.admin.cost,
+            cost: Number(this.admin.cost),
             city_id: this.admin.city_id,
           })
           .then((res) => {
