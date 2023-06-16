@@ -875,6 +875,7 @@ export default {
             if (error.message.includes('code 401')) {
               //console.log('auth error >>');
               this.$router.push({ path: '/auth/login' })
+              this.connecting = false;
             }
           });
         }
@@ -895,6 +896,7 @@ export default {
             if (error.message.includes('code 401')) {
               //console.log('auth error >>');
               this.$router.push({ path: '/auth/login' })
+              this.connecting = false;
             }
           });
         }
@@ -1053,42 +1055,51 @@ export default {
         this.$http
           .post(endpoint, formdata)
           .then((res) => {
-            this.connecting = false;
-            this.showNotification("تمت العملية بنجاح");
-            this.fetch();
-            this.alert.type = "warning";
-            this.alert.message = "Edit user done";
-            this.close();
-            this.errors = [];
-            this.admin = {
-              id: null,
-              name: "",
-              name_ar: "",
-              desc: "",
-              stock: null,
-              user_price_of_piece: null,
-              library_price_of_piece: null,
-              packet_pieces: null,
-              user_price_of_packet: null,
-              library_price_of_packet: null,
-              offer: null,
-              image: "",
-              category_id: null,
-              media: [],
-              colors: []
-            };
+            if (res.data && res.data.status && !res.data.status.status) {
+              this.showNotification(res.data.status.validation_message);
+              this.connecting = false;
+            }
+            else {
+              this.showNotification("تمت العملية بنجاح");
+              this.fetch();
+              this.alert.type = "warning";
+              this.alert.message = "Edit user done";
+              this.close();
+              this.errors = [];
+              this.admin = {
+                id: null,
+                name: "",
+                name_ar: "",
+                desc: "",
+                stock: null,
+                user_price_of_piece: null,
+                library_price_of_piece: null,
+                packet_pieces: null,
+                user_price_of_packet: null,
+                library_price_of_packet: null,
+                offer: null,
+                image: "",
+                category_id: null,
+                media: [],
+                colors: []
+              };
+              this.connecting = false;
+              this.connecting = false;
+            }
           })
           .catch(({ response }) => {
             this.connecting = false;
             this.errors = response.data.errors;
+            this.connecting = false;
           });
       }
       else {
         this.$http
           .post(`${this.baseApi}/api/admin/products`, formdata)
           .then((res) => {
-            if (res && res.data && res.data.status && !res.data.status.status) { 
+            if (res.data && res.data.status && !res.data.status.status) { 
               this.showNotification(res.data.status.validation_message);
+              this.connecting = false;
             }
             else {
               this.showNotification("تمت العملية بنجاح");
@@ -1114,6 +1125,7 @@ export default {
                 media: [],
                 colors: []
               };
+              this.connecting = false;
               this.connecting = false;
             }
           })

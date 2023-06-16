@@ -737,6 +737,7 @@ export default {
             if (error.message.includes('code 401')) {
               console.log('auth error >>');
               this.$router.push({ path: '/auth/login' })
+              this.connecting = false;
             }
           });
         }

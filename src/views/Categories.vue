@@ -90,7 +90,7 @@
                 <v-card-actions>
                   <v-btn
                     type="submit"
-                    :disabled="invalid"
+                    :disabled="invalid || connecting"
                     :loading="connecting"
                     color="primary"
                     >حفظ</v-btn
@@ -168,7 +168,6 @@
                   <v-card-actions>
                     <v-btn
                       type="submit"
-                      :loading="connecting"
                       color="primary">
                       فلتر
                     </v-btn>
@@ -458,6 +457,7 @@ export default {
             if (error.message.includes('code 401')) {
               console.log('auth error >>');
               this.$router.push({ path: '/auth/login' })
+              this.connecting = false;
             }
           });
         }
@@ -574,6 +574,7 @@ export default {
           .then((res) => {
             if (res && res.data && res.data.status && !res.data.status.status) {
               this.showNotification(res.data.status.validation_message);
+              this.connecting = false;
             }
             else {
               this.showNotification("تمت العملية بنجاح");
@@ -590,10 +591,13 @@ export default {
                 view_image: "",
                 parent_id: "",
               };
+              this.connecting = false;
+              this.connecting = false;
             }
           })
           .catch(({ response }) => {
             this.errors = response.data.errors;
+            this.connecting = false;
           });
       } else {
         this.$http
@@ -601,6 +605,7 @@ export default {
           .then((res) => {
             if (res.data && res.data.status && !res.data.status.status) {
               this.showNotification(res.data.status.validation_message);
+              this.connecting = false;
             }
             else {
               this.showNotification("تمت العملية بنجاح");
@@ -617,13 +622,16 @@ export default {
                 view_image: "",
                 parent_id: "",
               };
+              this.connecting = false;
+              this.connecting = false;
             }
           })
           .catch(({ response }) => {
             this.errors = response.data.errors;
+            this.connecting = false;
           });
       }
-      this.connecting = false;
+      
     },
     deleteItem(item) {
       if (confirm("هل تود حذف هذا العنصر ؟")) {

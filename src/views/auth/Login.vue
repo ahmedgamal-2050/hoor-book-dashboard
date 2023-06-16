@@ -55,7 +55,7 @@
             <v-btn
               type="submit"
               :loading="connecting"
-              :disabled="invalid || !validated"
+              :disabled="invalid || !validated || connecting"
               color="primary"
               >تسجيل الدخول</v-btn
             >

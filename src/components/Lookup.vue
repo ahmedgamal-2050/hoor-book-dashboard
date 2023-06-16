@@ -363,6 +363,7 @@ export default {
           })
           .catch(({ response }) => {
             this.errors = response.data.errors;
+            this.connecting = false;
           });
       } else {
         this.$http
@@ -382,9 +383,9 @@ export default {
           })
           .catch(({ response }) => {
             this.errors = response.data.errors;
+            this.connecting = false;
           });
       }
-      this.connecting = false;
     },
     deleteItem(item) {
       // const index = this.requests.indexOf(item);
