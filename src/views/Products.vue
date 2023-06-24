@@ -266,24 +266,19 @@
                           label="المخزون"
                           type="text"
                         />
-
-                        <div class="d-flex align-items-center">
-                          <VSelectWithValidation
-                            label="الألوان"
-                            rules="required"
-                            :items="color_ids"
-                            item-text="code"
-                            item-value="id"
-                            prepend-icon="lock"
-                            class="w-100"
-                            v-model="color.color_id" 
-                            :key="index"
-                            @change="getColorCode(color.color_id)"
-                          />
-                          <div class="pr-2" v-if="color_code">
-                            <span :style="{'background': color_code}" style="width: 16px; height: 16px; margin-inline: 5px; display: inline-block; border-radius: 4px;"></span>
-                          </div>
-                        </div>
+                        
+                        <VSelectColorWithValidation
+                          label="الألوان"
+                          rules="required"
+                          :items="color_ids"
+                          item-text="code"
+                          item-value="id"
+                          prepend-icon="lock"
+                          class="w-100"
+                          v-model="color.color_id" 
+                          :key="index"
+                          @change="getColorCode(color.color_id)"
+                        />
 
                         <!-- Color Media Field List -->
                         <div class="d-flex align-items-center">
@@ -470,15 +465,6 @@
                         <VTextFieldWithValidation
                           label="الإسم"
                           v-model="filter.name"
-                          prepend-icon="lock"
-                          type="text"
-                        />
-                      </v-col>
-
-                      <v-col class="pa-2" cols="12" lg="4" sm="6">
-                        <VTextFieldWithValidation
-                          label="الإسم بالعربي"
-                          v-model="filter.name_ar"
                           prepend-icon="lock"
                           type="text"
                         />
@@ -719,6 +705,7 @@ const headerConst = { align: "center", sortable: false };
 import VTextFieldWithValidation from "../components/inputs/VTextFieldWithValidation";
 import VFileInputWithValidation from "../components/inputs/VFileInputWithValidation";
 import VSelectWithValidation from "../components/inputs/VSelectWithValidation";
+import VSelectColorWithValidation from "../components/inputs/VSelectColorWithValidation";
 import VTextAreaWithValidation from "../components/inputs/VTextAreaWithValidation";
 
 import { mapActions } from "vuex";
@@ -803,6 +790,7 @@ export default {
     VTextFieldWithValidation,
     VFileInputWithValidation,
     VSelectWithValidation,
+    VSelectColorWithValidation,
     VTextAreaWithValidation,
   },
   computed: {
@@ -905,7 +893,6 @@ export default {
       return new Promise((resolve) => {
         let endpoint = `${this.baseApi}/api/admin/products?page=${this.page}`;
         if (this.filter.name != '') endpoint += `&name=${this.filter.name}`;
-        if (this.filter.name_ar != '') endpoint += `&name_ar=${this.filter.name_ar}`;
         if (this.filter.category_id != null) endpoint += `&category_id=${this.filter.category_id}`;
 
         this.$http.get(endpoint).then((res) => {
