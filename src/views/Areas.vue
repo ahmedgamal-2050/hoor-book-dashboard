@@ -68,7 +68,7 @@
                   />
 
                   <VTextFieldWithValidation
-                    rules="required|regex:^[0-9]*$"
+                    rules="required|regex:^[0-9.]*$"
                     v-model="admin.cost"
                     label="التكلفة"
                     prepend-icon="money"

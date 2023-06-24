@@ -52,7 +52,7 @@
                   
                   <VSelectWithValidation
                     label="شركات الشحن"
-                    rules="required"
+                    :rules="edit === true ? '' : 'required'"
                     :items="shipping_companies_ids" 
                     item-text="name"
                     item-value="id"          
@@ -151,6 +151,7 @@
         <!-- End Add/Edit Dialog Form -->
       </v-toolbar>
 
+      <!-- filter -->
       <div class="pa-3">
         <v-expansion-panels v-model="panel" multiple>
           <v-expansion-panel>
@@ -169,6 +170,14 @@
                       align="center"
                       no-gutters
                     >
+                      <v-col class="pa-2" cols="12" lg="4" sm="6">
+                        <VTextFieldWithValidation
+                          label="رقم الطلب"
+                          prepend-icon="lock"
+                          v-model="filter.id"
+                        />
+                      </v-col>
+
                       <v-col class="pa-2" cols="12" lg="4" sm="6">
                         <VSelectWithValidation
                           label="حالة الطلب"
@@ -197,6 +206,16 @@
                           v-model="filter.payment_status"
                         />
                       </v-col>
+
+                      <v-col class="pa-2" cols="12" lg="4" sm="6">
+                        <VTextFieldWithValidation
+                          label="تاريخ الطلب"
+                          prepend-icon="lock"
+                          v-model="filter.date"
+                          type="date"
+                        />
+                      </v-col>
+
                     </v-row>
                                     
                   </v-card-text>
@@ -271,7 +290,7 @@
         <template v-slot:[`item.total`]="{ item }">
           <div class="py-3">
             <div v-if="item.payment_type != null">
-              <b>نوع الدفع: </b><span>{{ item.payment_type }}</span>
+              <b>نوع الدفع: </b><span>{{ item.payment_type == 1 ? 'كاش' : 'Paymob'}}</span>
             </div>
             <div v-if="item.payment_status != null">
               <b>حالة الدفع: </b><span>{{ item.payment_status }}</span>
@@ -342,7 +361,7 @@
           <div v-if="item.created_at != null">
             <b>أنشئت في: </b>
             <div>
-              {{ item.created_at | moment("dddd, MMMM Do YYYY") }}
+              {{ item.created_at | moment("dddd, MMMM Do YYYY hh:mm A") }}
             </div>
           </div>
           <v-chip v-else small color="secondary" dark>غير متوفر</v-chip>
@@ -350,7 +369,7 @@
           <div v-if="item.updated_at != null">
             <b>تم التحديث في: </b>
             <div>
-              {{ item.updated_at | moment("dddd, MMMM Do YYYY") }}
+              {{ item.updated_at | moment("dddd, MMMM Do YYYY hh:mm A") }}
             </div>
           </div>
           <v-chip v-else small color="secondary" dark>غير متوفر</v-chip>
@@ -423,6 +442,7 @@
 <script>
 const headerConst = { align: "center", sortable: false };
 import VSelectWithValidation from "../components/inputs/VSelectWithValidation";
+import VTextFieldWithValidation from "../components/inputs/VTextFieldWithValidation";
 import { mapActions } from "vuex";
 import { BASE_API } from "../config/config";
 
@@ -444,9 +464,11 @@ export default {
       payment_status: "",
     },
     filter: {
+      id: "",
       status: "",
       shipping_companies_id: null,
       payment_status: "",
+      date: null,
     },
     panel: [ 0 ],
     isFiltering: false,
@@ -485,7 +507,8 @@ export default {
     baseApi: BASE_API,
   }),
   components: {
-    VSelectWithValidation
+    VSelectWithValidation,
+    VTextFieldWithValidation
   },
   computed: {
     formTitle() {
@@ -565,9 +588,11 @@ export default {
       this.loading = true;
       return new Promise((resolve) => {
         let endpoint = `${this.baseApi}/api/admin/orders?page=${this.page}`;
+        if (this.filter.id != '') endpoint += `&id=${this.filter.id}`;
         if (this.filter.status != '') endpoint += `&status=${this.filter.status}`;
-        if (this.filter.shipping_companies_id != '') endpoint += `&shipping_companies_id=${this.filter.shipping_companies_id}`;
-        if (this.filter.payment_status != null) endpoint += `&payment_status=${this.filter.payment_status}`;
+        if (this.filter.shipping_companies_id != null) endpoint += `&shipping_companies_id=${this.filter.shipping_companies_id}`;
+        if (this.filter.payment_status != '') endpoint += `&payment_status=${this.filter.payment_status}`;
+        if (this.filter.date != null) endpoint += `&date=${this.filter.date}`;
 
         this.$http.get(endpoint).then((res) => {
           this.isFiltering = true;
