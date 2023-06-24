@@ -1003,10 +1003,10 @@ export default {
       if (this.admin.user_price_of_packet) formdata.append("user_price_of_packet", Number(this.admin.user_price_of_packet));
       if (this.admin.library_price_of_packet) formdata.append("library_price_of_packet", Number(this.admin.library_price_of_packet));
       if (this.admin.offer) formdata.append("offer", Number(this.admin.offer));
-      if (this.admin.image) formdata.append("image", this.admin.image);
+      if (this.admin.image && !this.edit) formdata.append("image", this.admin.image);
       if (this.admin.category_id) formdata.append("category_id", this.admin.category_id);
       //if (this.admin.media) formdata.append("media[]", this.admin.media);
-      if (this.admin.media && this.admin.media.length > 0) {
+      if (this.admin.media && this.admin.media.length > 0 && !this.edit) {
         for (var i = 0; i < this.admin.media.length; i++) {
           formdata.append('media[]', this.admin.media[i].value);
         }
@@ -1017,7 +1017,7 @@ export default {
           var object = this.admin.colors[i];
           for (var key in object) {
             if (object.hasOwnProperty(key)) {
-              if (key == 'media') {
+              if (key == 'media' && !this.edit) {
                 for (var x = 0; x < object[key].length; x++) {
                   formdata.append('colors[' + i + '][media]['+ x +']', object[key][x].value);
                 }
