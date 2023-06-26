@@ -45,7 +45,7 @@
                   <VSelectWithValidation
                     label="حالة الطلب"
                     rules="required"
-                    :items="['Pending','Processing','Shipped','Delivered','Cancelled','Refunded']"           
+                    :items="['Pending','Processing','Shipped','Delivered','Cancelled','Refund']"           
                     prepend-icon="lock"
                     v-model="admin.status"
                   />
@@ -63,7 +63,7 @@
                   <VSelectWithValidation
                     label="حالة الدفع"
                     rules="required"
-                    :items="['Pending','Paid']"           
+                    :items="['Pending','Paid','Refunded']"           
                     prepend-icon="lock"
                     v-model="admin.payment_status"
                   />
