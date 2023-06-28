@@ -555,6 +555,7 @@
           <div v-if="item.category != null">
             <div><b># </b>{{ item.category.id }}</div>
             <div><b>الاسم: </b>{{ item.category.name }}</div>
+            <div v-if="item.category.name_ar != null"><b>الاسم بالعربي: </b>{{ item.category.name_ar }}</div>
             <div class="mt-2">
               <div>
                 <a :href="`${baseApi}/${item.category.image}`" target="_blank">
@@ -1017,9 +1018,11 @@ export default {
           var object = this.admin.colors[i];
           for (var key in object) {
             if (object.hasOwnProperty(key)) {
-              if (key == 'media' && !this.edit) {
+              if (key == 'media') {
                 for (var x = 0; x < object[key].length; x++) {
-                  formdata.append('colors[' + i + '][media]['+ x +']', object[key][x].value);
+                  if (object[key][x].value) {
+                    formdata.append('colors[' + i + '][media]['+ x +']', object[key][x].value);
+                  }
                 }
               }
               else {
