@@ -124,9 +124,12 @@
                     {{ order.product.category.name_ar }}
                   </div>                  
                 </div>
-                <div class="mb-3">
+                <div class="mb-3" v-if="order.color_id">
                   <b>اللون المطلوب: </b>
-                  {{ order.color_id ? order.color : 'لا يوجد لون لهذا المنتج' }}
+                  <span>
+                    {{ order.color.code }}
+                    <span class="" :style="{'background': order.color['code']}" style="width: 16px; height: 16px; margin-inline: 5px; display: inline-block; border-radius: 4px;"></span>
+                  </span>
                 </div> 
                 <div class="mb-3">
                   <b>العدد المطلوب: </b>
@@ -321,19 +324,28 @@
         <template v-slot:[`item.user_address`]="{ item }">
           <div class="py-3">
             <div v-if="item.user_address.id != null">
-              <b># العنوان: </b><span>{{ item.user_address.id }}</span>
+              <b>كود العنوان: </b><span>{{ item.user_address.id }}</span>
             </div>
             <div v-if="item.user_address.address_details != null">
-              <b>تفاصيل العنوان: </b><span>{{ item.user_address.address_details }}</span>
+              <b>تفاصيل العنوان: </b>
+              <span>
+                {{ item.user_address.governorate.name_ar }} - 
+                {{ item.user_address.city.name_ar }} - 
+                {{ item.user_address.area.name_ar }} - 
+                {{ item.user_address.address_details }}
+              </span>
             </div>
             <div v-if="item.user_address.user_id != null">
-              <b># العميل: </b><span>{{ item.user_address.user_id }}</span>
+              <b>كود العميل: </b><span>{{ item.user_address.user_id }}</span>
             </div>
             <div v-if="item.user_address.full_name != null">
               <b>إسم العميل: </b><span>{{ item.user_address.full_name }}</span>
             </div>
             <div v-if="item.user_address.phone != null">
               <b>رقم موبايل العميل: </b><span>{{ item.user_address.phone }}</span>
+            </div>
+            <div v-if="item.user_address.phone != null">
+              <b>الإيميل: </b><span>{{ item.user.email }}</span>
             </div>
             <div v-if="item.user_address.verification_code != null">
               <b>كود التفعيل: </b><span>{{ item.user_address.verification_code }}</span>

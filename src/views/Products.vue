@@ -1007,9 +1007,11 @@ export default {
       if (this.admin.image && !this.edit) formdata.append("image", this.admin.image);
       if (this.admin.category_id) formdata.append("category_id", this.admin.category_id);
       //if (this.admin.media) formdata.append("media[]", this.admin.media);
-      if (this.admin.media && this.admin.media.length > 0 && !this.edit) {
+      if (this.admin.media && this.admin.media.length > 0) {
         for (var i = 0; i < this.admin.media.length; i++) {
-          formdata.append('media[]', this.admin.media[i].value);
+          if (this.admin.media[i].value) {
+            formdata.append('media[]', this.admin.media[i].value);
+          }
         }
       }
       if (this.admin.colors && this.admin.colors.length > 0) {
