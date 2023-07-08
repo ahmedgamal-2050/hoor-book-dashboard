@@ -400,7 +400,7 @@
               <span>وصف المنتج</span>
               <v-spacer></v-spacer>
               <v-btn icon small @click="close">
-                <v-icon>color="secondary">إغلاقclose</v-icon>
+                <v-icon>close</v-icon>
               </v-btn>
             </v-card-title>
             <v-card-text class="text-xs-center">
