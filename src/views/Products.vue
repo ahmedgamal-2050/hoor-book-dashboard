@@ -229,6 +229,42 @@
 
                 <hr/>
 
+                <!-- Slider -->
+                <v-card-text>
+                  <template>
+                    <v-container fluid>
+                      <v-checkbox
+                        v-model="admin.slider"
+                        :label="`سلايدر ؟`"
+                      ></v-checkbox>
+                    </v-container>
+                  </template>
+                  
+                  <div class="d-flex align-items-center" v-if="admin.slider == 1">
+                    <VFileInputWithValidation
+                      class="w-100"
+                      label="صورة السلايدر"
+                      variant="filled"
+                      prepend-icon="camera"
+                      v-model="admin.slider_image" 
+                      :key="index"
+                    />
+                    <div class="text-center">
+                      <span v-if="!admin.view_slider_image">لا يوجد صورة</span>
+                      <div v-else-if="typeof admin.view_slider_image === 'object'"></div>
+
+                      <a v-else :href="`${baseApi}/${admin.view_slider_image}`" target="_blank">
+                        <img class="of-contain"
+                          :src="`${baseApi}/${admin.view_slider_image}`"
+                          alt="صورة السلايدر"
+                        />
+                      </a>
+                    </div>
+                  </div>
+                </v-card-text>
+
+                <hr/>
+
                 <!-- Colors -->
                 <v-card-text>  
                   <div class="d-flex align-items-center">
@@ -738,7 +774,9 @@ export default {
       image: "",
       category_id: null,
       media: [],
-      colors: []
+      colors: [],
+      slider_image: "",
+      slider: 0,
     },
     filter: {
       name: "",
@@ -941,7 +979,9 @@ export default {
         image: "",
         category_id: null,
         media: [],
-        colors: []
+        colors: [],
+        slider: 0,
+        slider_image: "",
       };
       this.productDiscription = "";
       this.reviews = [];
@@ -975,6 +1015,9 @@ export default {
         this.admin.offer = item.offer;
         this.admin.view_image = item.image;
         this.admin.image = "";
+        this.admin.slider = item.slider ? 1 : 0;
+        this.admin.slider_image = "";
+        this.admin.view_slider_image = item.slider_image;
         this.admin.category_id = item.category.id;
         if (item.media && item.media.length > 0) {
           for (var i = 0; i < item.media.length; i++) {
@@ -1004,8 +1047,10 @@ export default {
       if (this.admin.user_price_of_packet) formdata.append("user_price_of_packet", Number(this.admin.user_price_of_packet));
       if (this.admin.library_price_of_packet) formdata.append("library_price_of_packet", Number(this.admin.library_price_of_packet));
       if (this.admin.offer) formdata.append("offer", Number(this.admin.offer));
-      if (this.admin.image && !this.edit) formdata.append("image", this.admin.image);
+      if (this.admin.image) formdata.append("image", this.admin.image);
       if (this.admin.category_id) formdata.append("category_id", this.admin.category_id);
+      formdata.append("slider", this.admin.slider ? 1 : 0);
+      if ((this.admin.slider || this.admin.slider == 1) && this.admin.slider_image) formdata.append("slider_image", this.admin.slider_image);
       //if (this.admin.media) formdata.append("media[]", this.admin.media);
       if (this.admin.media && this.admin.media.length > 0) {
         for (var i = 0; i < this.admin.media.length; i++) {
@@ -1067,7 +1112,9 @@ export default {
                 image: "",
                 category_id: null,
                 media: [],
-                colors: []
+                colors: [],
+                slider: 0,
+                slider_image: ""
               };
               this.connecting = false;
             }
@@ -1107,7 +1154,9 @@ export default {
                 image: "",
                 category_id: null,
                 media: [],
-                colors: []
+                colors: [],
+                slider: 0,
+                slider_image: ""
               };
               this.connecting = false;
             }
