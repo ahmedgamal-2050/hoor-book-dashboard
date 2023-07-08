@@ -240,9 +240,9 @@
                     </v-container>
                   </template>
                   
-                  <div class="d-flex align-items-center" v-if="admin.slider == 1">
+                  <div class="d-flex align-items-center" v-if="admin.slider">
                     <VFileInputWithValidation
-                      class="w-100"
+                      class="w-100 me-2"
                       label="صورة السلايدر"
                       variant="filled"
                       prepend-icon="camera"
@@ -776,7 +776,7 @@ export default {
       media: [],
       colors: [],
       slider_image: "",
-      slider: 0,
+      slider: false,
     },
     filter: {
       name: "",
@@ -980,7 +980,7 @@ export default {
         category_id: null,
         media: [],
         colors: [],
-        slider: 0,
+        slider: false,
         slider_image: "",
       };
       this.productDiscription = "";
@@ -1015,9 +1015,9 @@ export default {
         this.admin.offer = item.offer;
         this.admin.view_image = item.image;
         this.admin.image = "";
-        this.admin.slider = item.slider ? 1 : 0;
+        this.admin.slider = item.slider;
         this.admin.slider_image = "";
-        this.admin.view_slider_image = item.slider_image;
+        this.admin.view_slider_image = item.slider.image;
         this.admin.category_id = item.category.id;
         if (item.media && item.media.length > 0) {
           for (var i = 0; i < item.media.length; i++) {
@@ -1049,8 +1049,8 @@ export default {
       if (this.admin.offer) formdata.append("offer", Number(this.admin.offer));
       if (this.admin.image) formdata.append("image", this.admin.image);
       if (this.admin.category_id) formdata.append("category_id", this.admin.category_id);
-      formdata.append("slider", this.admin.slider ? 1 : 0);
-      if ((this.admin.slider || this.admin.slider == 1) && this.admin.slider_image) formdata.append("slider_image", this.admin.slider_image);
+      formdata.append("slider", this.admin.slider);
+      if ((this.admin.slider) && this.admin.slider_image) formdata.append("slider_image", this.admin.slider_image);
       //if (this.admin.media) formdata.append("media[]", this.admin.media);
       if (this.admin.media && this.admin.media.length > 0) {
         for (var i = 0; i < this.admin.media.length; i++) {
@@ -1113,7 +1113,7 @@ export default {
                 category_id: null,
                 media: [],
                 colors: [],
-                slider: 0,
+                slider: false,
                 slider_image: ""
               };
               this.connecting = false;
@@ -1155,7 +1155,7 @@ export default {
                 category_id: null,
                 media: [],
                 colors: [],
-                slider: 0,
+                slider: false,
                 slider_image: ""
               };
               this.connecting = false;
