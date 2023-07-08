@@ -152,6 +152,65 @@
           </v-card>
         </v-dialog>
         <!-- End Add/Edit Dialog Form -->
+
+        <!-- Start Print Dialog Form -->
+        <v-dialog v-model="printDialog" persistent max-width="600px">
+          <v-card>
+            <v-card-title>
+              <span></span>
+              <v-spacer></v-spacer>
+              <v-btn icon small @click="close">
+                <v-icon>close</v-icon>
+              </v-btn>
+            </v-card-title>
+            <v-card-text id="print_info" v-if="print_info">
+              <div class="text-center">
+                <div class="">
+                  <b>رقم الطلب </b>
+                  #{{ print_info.id }}
+                </div>
+                <div class="">
+                  <b>العميل : </b>
+                  {{ print_info.user.name }}
+                </div>
+                <div class="">
+                  <b>رقم الهاتف : </b>
+                  {{ print_info.user_address.phone }}
+                </div>
+                <div class="">
+                  <b>العنوان : </b>
+                  <span>
+                    {{ print_info.user_address.governorate.name_ar }} - 
+                    {{ print_info.user_address.city.name_ar }} - 
+                    {{ print_info.user_address.area.name_ar }} 
+                  </span>
+                  <br>
+                  <span>
+                    {{ print_info.user_address.address_details }}
+                  </span>
+                </div>
+                <div class="">
+                  <b>الاجمالي : </b>
+                  {{ print_info.total }}
+                </div>
+                <div class="">
+                  <b>حالة الطلب : </b>
+                  {{ print_info.status }}
+                </div>
+                <div class="pt-1">
+                  <span class="px-2" style="border:1px solid black">
+                    HoorBook - حور بوك
+                  </span>                  
+                </div> 
+              </div>
+            </v-card-text>
+            <v-card-actions>
+              <v-btn @click="print" color="primary">طباعة</v-btn>
+              <v-btn @click="close" color="secondary">إغلاق</v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+        <!-- End Add/Edit Dialog Form -->
       </v-toolbar>
 
       <!-- filter -->
@@ -342,7 +401,7 @@
               <b>إسم العميل: </b><span>{{ item.user_address.full_name }}</span>
             </div>
             <div v-if="item.user_address.phone != null">
-              <b>رقم موبايل العميل: </b><span>{{ item.user_address.phone }}</span>
+              <b>رقم الهاتف: </b><span>{{ item.user_address.phone }}</span>
             </div>
             <div v-if="item.user_address.phone != null">
               <b>الإيميل: </b><span>{{ item.user.email }}</span>
@@ -388,7 +447,7 @@
         </template>
 
         <template v-slot:[`item.actions`]="{ item }">
-          <!-- start async admin/role action -->
+          <!-- start view order info action -->
           <v-tooltip right>
             <template v-slot:activator="{ on, attrs }">
               <v-btn
@@ -404,9 +463,27 @@
             </template>
             <span>عرض معلومات الطلب</span>
           </v-tooltip>
-          <!-- end async admin/role action -->
+          <!-- end view order info action -->
 
-          <!-- start Add-Edit action -->
+          <!-- start print action -->
+          <v-tooltip right>
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn
+                color="black"
+                icon
+                x-small
+                v-bind="attrs"
+                v-on="on"
+                @click="viewPrintDialog(item)"
+              >
+                <v-icon>print</v-icon>
+              </v-btn>
+            </template>
+            <span>تعديل</span>
+          </v-tooltip>
+          <!-- end print action -->
+
+          <!-- start Edit action -->
           <v-tooltip right>
             <template v-slot:activator="{ on, attrs }">
               <v-btn
@@ -422,7 +499,7 @@
             </template>
             <span>تعديل</span>
           </v-tooltip>
-          <!-- end Add-Edit action -->
+          <!-- end Edit action -->
         </template>
         
         <template slot="pageText" slot-scope="props">
@@ -491,6 +568,7 @@ export default {
     requests: [],
     shipping_companies_ids: [],
     order_meta: [],
+    print_info: null,
     viewOrderDialog: false,
     totalRequests: 0,
     pagination: {},
@@ -661,7 +739,18 @@ export default {
         payment_status: "",
       };
       this.order_meta = [];
+      this.print_info = null;
       this.viewOrderDialog = false;
+      this.printDialog = false;
+    },
+    viewPrintDialog(item) {
+      this.printDialog = !this.printDialog;
+      this.print_info = item;
+      console.log('print_info >>', this.print_info);
+      //window.print();
+    },
+    print() {
+      window.print();
     },
     editing(process, item = this.admin) {
       if (process === "add") {

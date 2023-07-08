@@ -59,4 +59,47 @@ body {
 .v-main {
   background-color: #f5f5f5;
 }
+
+@media print {
+  main, .v-card__title, .v-card__actions {
+    display: none !important;
+  }
+
+  body .v-dialog__content {
+    align-items: start;
+    justify-content: start;
+  }
+
+  .v-dialog__content .v-dialog {
+    box-shadow: none !important;
+    margin: 0;
+    border-radius: 0px !important;
+    width: 6cm;
+    height: 4cm;
+    overflow-y: hidden;
+    padding: 0;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  .v-dialog .v-card {
+    box-shadow: none !important;
+    padding-top: 6px;
+    width: 100% !important;
+    height: 100% !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  .v-dialog .v-card__text {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    font-size: 9.5px !important;
+    color: #000 !important;
+  }
+
+  * {
+    line-height: 1.45 !important;
+  }
+}
 </style>
