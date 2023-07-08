@@ -195,7 +195,7 @@
                 </div>
                 <div class="">
                   <b>حالة الطلب : </b>
-                  {{ print_info.status }}
+                  {{ print_info.payment_type == 1 ? 'الدفع عند الاستلام' : 'مدفوع'}}
                 </div>
                 <div class="pt-1">
                   <span class="px-2" style="border:1px solid black">
