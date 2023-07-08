@@ -522,6 +522,10 @@ export default {
               };
             });
             this.category_ids = items;
+            this.category_ids.unshift({
+              id: null,
+              name: 'غير تابع لفئة'
+            });
           });
         }
       });
