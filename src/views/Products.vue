@@ -1015,7 +1015,7 @@ export default {
         this.admin.offer = item.offer;
         this.admin.view_image = item.image;
         this.admin.image = "";
-        this.admin.slider = item.slider;
+        this.admin.slider = item.slider === null ? false : true;
         this.admin.slider_image = "";
         if(item.slider) this.admin.view_slider_image = item.slider.image;
         this.admin.category_id = item.category.id;
