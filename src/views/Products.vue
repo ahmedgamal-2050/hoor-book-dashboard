@@ -1017,7 +1017,7 @@ export default {
         this.admin.image = "";
         this.admin.slider = item.slider;
         this.admin.slider_image = "";
-        this.admin.view_slider_image = item.slider.image;
+        if(item.slider) this.admin.view_slider_image = item.slider.image;
         this.admin.category_id = item.category.id;
         if (item.media && item.media.length > 0) {
           for (var i = 0; i < item.media.length; i++) {
