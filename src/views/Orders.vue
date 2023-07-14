@@ -611,7 +611,12 @@ export default {
     },
     page(val) {
       this.pagination.page = val;
-      this.fetch();
+      if (this.isFiltering) {
+        this.fetchFilter();
+      }
+      else {
+        this.fetch();
+      }
     },
   },
   created() {
@@ -642,6 +647,7 @@ export default {
           let endpoint = `${this.baseApi}/api/admin/orders?page=${this.page}`;
 
           this.$http.get(endpoint).then((res) => {
+            this.isFiltering = false;
             let items = res.data.data;
             console.log('getDataFromApi items >>', items);
             let meta = res.data;
@@ -703,6 +709,7 @@ export default {
       });
     },
     clearFilter() {
+      this.page = 1;
       this.fetch();
       this.isFiltering = false;
       this.filter = {

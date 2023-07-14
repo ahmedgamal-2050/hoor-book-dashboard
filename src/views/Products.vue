@@ -843,7 +843,12 @@ export default {
     },
     page(val) {
       this.pagination.page = val;
-      this.fetch();
+      if (this.isFiltering) {
+        this.fetchFilter();
+      }
+      else {
+        this.fetch();
+      }
     },
   },
   created() {
@@ -889,6 +894,7 @@ export default {
           let endpoint = `${this.baseApi}/api/admin/products?page=${this.page}`;
 
           this.$http.get(endpoint).then((res) => {
+            this.isFiltering = false;
             let items = res.data.data;
             //console.log('getDataFromApi items >>', items);
             let meta = res.data.meta;
@@ -953,6 +959,7 @@ export default {
       });
     },
     clearFilter() {
+      this.page = 1;
       this.fetch();
       this.isFiltering = false;
       this.filter = {
@@ -1009,7 +1016,7 @@ export default {
         this.admin.stock = item.stock;
         this.admin.user_price_of_piece = item.user_price_of_piece;
         this.admin.library_price_of_piece = item.library_price_of_piece;
-        this.admin.packet_pieces = item.packet_pieces;
+        this.admin.packet_pieces = item.packet_pieces ? item.packet_pieces : '0';
         this.admin.user_price_of_packet = item.user_price_of_packet;
         this.admin.library_price_of_packet = item.library_price_of_packet;
         this.admin.offer = item.offer;

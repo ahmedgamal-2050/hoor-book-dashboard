@@ -312,7 +312,12 @@ export default {
     },
     page(val) {
       this.pagination.page = val;
-      this.fetch();
+      if (this.isFiltering) {
+        this.fetchFilter();
+      }
+      else {
+        this.fetch();
+      }
     },
   },
   created() {
@@ -339,6 +344,7 @@ export default {
       this.loading = true;
       return new Promise((resolve) => {
         if (res != null) {
+          this.isFiltering = false;
           let items = res.data.data;
           const total = res.data.total;
           this.pagination.rowsPerPage = res.data.per_page;
@@ -395,6 +401,7 @@ export default {
         if (this.filter.type != '') endpoint += `&type=${this.filter.type}`;
 
         this.$http.get(endpoint).then((res) => {
+          this.isFiltering = true;
           let items = res.data.data;
           let meta = res.data;
           this.loading = false;
@@ -412,6 +419,7 @@ export default {
       });
     },
     clearFilter() {
+      this.page = 1;
       this.fetch();
       this.isFiltering = false;
       this.filter = {
