@@ -171,7 +171,7 @@
                 </div>
                 <div class="">
                   <b>العميل : </b>
-                  {{ print_info.user.name }}
+                  {{ print_info.user_address.full_name }}
                 </div>
                 <div class="">
                   <b>رقم الهاتف : </b>
@@ -754,7 +754,6 @@ export default {
       this.printDialog = !this.printDialog;
       this.print_info = item;
       console.log('print_info >>', this.print_info);
-      //window.print();
     },
     print() {
       window.print();
