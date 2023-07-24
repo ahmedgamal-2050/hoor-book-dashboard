@@ -488,7 +488,12 @@ export default {
             }
             else {
               this.showNotification("تمت العملية بنجاح");
-              this.fetch();
+              if (this.isFiltering) {
+                this.fetchFilter();
+              }
+              else {
+                this.fetch();
+              }
               this.alert.type = "warning";
               this.alert.message = "Edit governorate done";
               this.close();
