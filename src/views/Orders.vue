@@ -278,6 +278,18 @@
                         />
                       </v-col>
 
+
+                      <v-col class="pa-2" cols="12" lg="4" sm="6">
+                        <VSelectWithValidation
+                          label="نوع العميل"
+                          :items="user_type" 
+                          item-text="type"
+                          item-value="id"
+                          prepend-icon="lock"
+                          v-model="filter.user_type"
+                        />
+                      </v-col>
+
                     </v-row>
                                     
                   </v-card-text>
@@ -394,6 +406,19 @@
                 {{ item.user_address.address_details }}
               </span>
             </div>
+            <div v-if="item.user_address.longitude != null && item.user_address.latitude != null">
+              <b>العنوان علي الخريطة: </b>
+              <span>
+                <a
+                  :href="`https://www.google.com/maps?q=${item.user_address.latitude},${item.user_address.longitude}`"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  عرض على الخريطة
+                </a>
+              </span>
+            </div>
+
             <div v-if="item.user_address.user_id != null">
               <b>كود العميل: </b><span>{{ item.user_address.user_id }}</span>
             </div>
@@ -557,6 +582,7 @@ export default {
       status: "",
       shipping_companies_id: null,
       payment_status: "",
+      user_type: "",
       date: null,
     },
     panel: [ 0 ],
@@ -567,6 +593,16 @@ export default {
     dialog: false,
     requests: [],
     shipping_companies_ids: [],
+    user_type:[
+      {
+        'type':"عادي",
+        "id": 2
+      },
+      {
+        'type':"جملة",
+        "id": 3
+      }  
+    ],
     order_meta: [],
     print_info: null,
     viewOrderDialog: false,
@@ -688,6 +724,7 @@ export default {
         if (this.filter.status != '') endpoint += `&status=${this.filter.status}`;
         if (this.filter.shipping_companies_id != null) endpoint += `&shipping_companies_id=${this.filter.shipping_companies_id}`;
         if (this.filter.payment_status != '') endpoint += `&payment_status=${this.filter.payment_status}`;
+        if (this.filter.user_type != '') endpoint += `&user_type=${this.filter.user_type}`;
         if (this.filter.date != null) endpoint += `&date=${this.filter.date}`;
 
         this.$http.get(endpoint).then((res) => {
@@ -713,9 +750,11 @@ export default {
       this.fetch();
       this.isFiltering = false;
       this.filter = {
+        id:"",
         status: "",
         shipping_companies_id: null,
         payment_status: "",
+        user_type: ""
       };
     },
     getShippingCampaniesId(res = null) {

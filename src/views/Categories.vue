@@ -155,7 +155,7 @@
                       <v-col class="pa-2" cols="12" lg="4" sm="6">
                         <VSelectWithValidation
                           label="الفئة"
-                          :items="category_ids"
+                          :items="filteredCategories"
                           item-text="name"
                           item-value="id"
                           prepend-icon="lock"
@@ -278,8 +278,8 @@
           </v-tooltip>
           <!-- end Add-Edit action -->
 
-          <!-- start delete action -->
-          <v-tooltip right>
+                <!-- start delete action -->
+                <v-tooltip right>
             <template v-slot:activator="{ on, attrs }">
               <v-btn
                 color="red"
@@ -289,12 +289,48 @@
                 v-on="on"
                 @click="deleteItem(item)"
               >
+              
                 <v-icon>delete_forever</v-icon>
               </v-btn>
             </template>
             <span>حذف</span>
           </v-tooltip>
-          <!-- end delete action -->
+
+
+          <v-tooltip v-if="item.deleted_at == null" right>
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn
+                color="orange"
+                icon
+                x-small
+                v-bind="attrs"
+                v-on="on"
+                @click="softdeleteItem(item)"
+              >
+                <v-icon>not_interested</v-icon>
+              </v-btn>
+            </template>
+            <span>تعطيل {{ item.name }} </span>
+          </v-tooltip>
+          <!-- end deactivate action -->
+          <!-- start deactivate action -->
+          <v-tooltip v-if="item.deleted_at !== null" right>
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn
+                color="green"
+                icon
+                x-small
+                v-bind="attrs"
+                v-on="on"
+                @click="restoreItem(item)"
+              >
+                <v-icon>restore</v-icon>
+              </v-btn>
+            </template>
+            <span>تنشيط {{ item.name }} </span>
+          </v-tooltip>
+          <!-- end deactivate action -->
+
         </template>
         
         <template slot="pageText" slot-scope="props">
@@ -397,6 +433,9 @@ export default {
     VSelectWithValidation
   },
   computed: {
+    filteredCategories() {
+      return this.category_ids.filter((category) => category.children_count > 0);
+    },    
     formTitle() {
       return this.edit ? "Edit category" : "Add category";
     },
@@ -526,13 +565,17 @@ export default {
             let items = res.data.map((item) => {
               return {
                 id: item.id,
-                name: item.name_ar
+                name: item.name_ar,
+                parent_id: item.parent_id,
+                children_count: item.children_count
               };
             });
             this.category_ids = items;
             this.category_ids.unshift({
               id: null,
-              name: 'غير تابع لفئة'
+              name: 'غير تابع لفئة',
+              parent_id: null,
+              children_count: 0
             });
           });
         }
@@ -653,6 +696,28 @@ export default {
           this.showNotification("تمت العملية بنجاح");
           this.fetch();
           this.alert.message = "Delete category done";
+          this.alert.type = "success";
+        });
+      }
+    },
+    softdeleteItem(item) {
+       // const index = this.requests.indexOf(item);
+       if (confirm("هل تود توقيف  هذا العنصر ؟")) {
+        this.$http.delete(`${this.baseApi}/api/admin/categories/softDelete/${item.id}`).then((res) => {
+          this.showNotification("تمت العملية بنجاح");
+          this.fetch();
+          this.alert.message = "Stop category done";
+          this.alert.type = "success";
+        });
+      }
+    },
+    restoreItem(item) {
+       // const index = this.requests.indexOf(item);
+       if (confirm("هل تود استرجاع  هذا العنصر ؟")) {
+        this.$http.delete(`${this.baseApi}/api/admin/categories/restore/${item.id}`).then((res) => {
+          this.showNotification("تمت العملية بنجاح");
+          this.fetch();
+          this.alert.message = "restore category done";
           this.alert.type = "success";
         });
       }

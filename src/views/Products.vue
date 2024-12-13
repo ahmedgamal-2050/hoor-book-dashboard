@@ -59,6 +59,22 @@
                     type="text"
                   />
 
+                  <VTextFieldWithValidation
+                    rules="required|min:3"
+                    label="الإسم للبحث"
+                    v-model="admin.searching_name"
+                    prepend-icon="lock"
+                    type="text"
+                  />
+
+                  <VTextFieldWithValidation
+                    rules="required|min:3"
+                    label="الإسم بالعربي للبحث"
+                    v-model="admin.searching_name_ar"
+                    prepend-icon="lock"
+                    type="text"
+                  />
+
                   <VTextAreaWithValidation
                     rules="required"
                     v-model="admin.desc"
@@ -73,6 +89,22 @@
                     v-model="admin.stock"
                     prepend-icon="lock"
                     hide-spin-buttons
+                    type="text"
+                  />
+
+                  <VTextFieldWithValidation
+                    rules="regex:^[0-9.]*$"
+                    label="سعر الجملة للقطعة"
+                    v-model="admin.piece_wholesale_price"
+                    prepend-icon="lock"
+                    type="text"
+                  />
+
+                  <VTextFieldWithValidation
+                    rules="regex:^[0-9.]*$"
+                    label="سعر الجملة للدستة"
+                    v-model="admin.packet_wholesale_price"
+                    prepend-icon="lock"
                     type="text"
                   />
 
@@ -115,6 +147,15 @@
                     prepend-icon="lock"
                     type="text"
                   />
+
+                  <VTextFieldWithValidation
+                    rules="required|regex:^[0-9.]*$"
+                    label="سعر الرزمة للمكتبة"
+                    v-model="admin.library_price_of_packet"
+                    prepend-icon="lock"
+                    type="text"
+                  />
+                  
                   
                   <VFileInputWithValidation
                     :rules="edit === true ? '' : 'required'"
@@ -516,6 +557,18 @@
                           v-model="filter.category_id"
                         />
                       </v-col>
+
+                      <v-col class="pa-2" cols="12" lg="4" sm="6">
+                        <VSelectWithValidation
+                          label="رتب حسب المخزون"
+                          :items="stock_sorting_kinds"
+                          item-text="name"
+                          item-value="value"
+                          prepend-icon="lock"
+                          v-model="filter.sortingModel.sortingDirection"
+                        />
+                      </v-col>
+
                     </v-row>
                                     
                   </v-card-text>
@@ -583,6 +636,19 @@
               <div class="font-weight-bold">الاسم بالعربي:</div>
               {{ item.name_ar }}
             </div>
+
+
+            <div v-if="item.searching_name != null">
+              <div class="font-weight-bold"> الاسم للبحث:</div>
+              {{ item.searching_name }}
+            </div>
+            <v-chip v-else small color="secondary" dark>غير متوفر</v-chip>
+
+            <div v-if="item.searching_name_ar != null">
+              <div class="font-weight-bold">الاسم بالعربي للبحث:</div>
+              {{ item.searching_name_ar }}
+            </div>
+            
             <v-chip v-else small color="secondary" dark>غير متوفر</v-chip>            
           </div>
         </template>
@@ -652,6 +718,12 @@
           <div v-if="item.offer != null">
             <b>الخصم: </b> {{ item.offer }}%
           </div>
+          <div v-if="item.created_at != null">
+            <b>تاريخ الانشاء: </b> {{ item.created_at }}
+          </div>
+          <div v-if="item.updated_at != null">
+            <b>تاريخ التحديث: </b> {{ item.updated_at }}
+          </div>
           <v-chip v-else small color="secondary" dark>غير متوفر</v-chip>
         </template>
 
@@ -703,12 +775,47 @@
                 v-on="on"
                 @click="deleteItem(item)"
               >
+              
                 <v-icon>delete_forever</v-icon>
               </v-btn>
             </template>
             <span>حذف</span>
           </v-tooltip>
-          <!-- end delete action -->
+
+
+          <v-tooltip v-if="item.deleted_at == null" right>
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn
+                color="orange"
+                icon
+                x-small
+                v-bind="attrs"
+                v-on="on"
+                @click="softdeleteItem(item)"
+              >
+                <v-icon>not_interested</v-icon>
+              </v-btn>
+            </template>
+            <span>تعطيل {{ item.name }} </span>
+          </v-tooltip>
+          <!-- end deactivate action -->
+          <!-- start deactivate action -->
+          <v-tooltip v-if="item.deleted_at !== null" right>
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn
+                color="green"
+                icon
+                x-small
+                v-bind="attrs"
+                v-on="on"
+                @click="restoreItem(item)"
+              >
+                <v-icon>restore</v-icon>
+              </v-btn>
+            </template>
+            <span>تنشيط {{ item.name }} </span>
+          </v-tooltip>
+          <!-- end deactivate action -->
         </template>
         
         <template slot="pageText" slot-scope="props">
@@ -763,6 +870,8 @@ export default {
     admin: {
       name: "",
       name_ar: "",
+      searching_name: "",
+      searching_name_ar: "",
       desc: "",
       stock: null,
       user_price_of_piece: null,
@@ -770,6 +879,8 @@ export default {
       packet_pieces: null,
       user_price_of_packet: null,
       library_price_of_packet: null,
+      piece_wholesale_price:0,
+      packet_wholesale_price:0,
       offer: null,
       image: "",
       category_id: null,
@@ -781,7 +892,13 @@ export default {
     filter: {
       name: "",
       name_ar: "",
-      category_id: null
+      searching_name: "",
+      searching_name_ar: "",
+      category_id: null,
+      sortingModel:{
+        sortingExpression:'stock',
+        sortingDirection: null
+      }
     },
     isFiltering: false,
     panel: [ 0 ],
@@ -794,6 +911,16 @@ export default {
     dialog: false,
     requests: [],
     category_ids: [],
+    stock_sorting_kinds:[
+      {
+        'name':'من الاصغر للاكبر',
+        "value" : "asc"
+      },
+      {
+        'name':"من الاكبر للاصغر",
+        "value":"desc"
+      }
+  ],
     color_ids: [],
     totalRequests: 0,
     pagination: {},
@@ -939,7 +1066,10 @@ export default {
         let endpoint = `${this.baseApi}/api/admin/products?page=${this.page}`;
         if (this.filter.name != '') endpoint += `&name=${this.filter.name}`;
         if (this.filter.category_id != null) endpoint += `&category_id=${this.filter.category_id}`;
-
+        if (this.filter.sortingModel.sortingDirection != null) {
+    endpoint += `&sortingModel[sortingExpression]=${encodeURIComponent(this.filter.sortingModel.sortingExpression)}` +
+                `&sortingModel[sortingDirection]=${encodeURIComponent(this.filter.sortingModel.sortingDirection)}`;
+}
         this.$http.get(endpoint).then((res) => {
           this.isFiltering = true;
           let items = res.data.data;
@@ -965,6 +1095,8 @@ export default {
       this.filter = {
         name: "",
         name_ar: "",
+        searching_name: "",
+        searching_name_ar: "",
         category_id: null
       };
     },
@@ -975,6 +1107,8 @@ export default {
       this.admin = {
         name: "",
         name_ar: "",
+        searching_name: "",
+        searching_name_ar: "",
         desc: "",
         stock: null,
         user_price_of_piece: null,
@@ -1012,6 +1146,8 @@ export default {
         this.admin.id = item.id;
         this.admin.name = item.name;
         this.admin.name_ar = item.name_ar;
+        this.admin.searching_name = item.searching_name;
+        this.admin.searching_name_ar = item.searching_name_ar;
         this.admin.desc = item.desc;
         this.admin.stock = item.stock;
         this.admin.user_price_of_piece = item.user_price_of_piece;
@@ -1019,6 +1155,8 @@ export default {
         this.admin.packet_pieces = item.packet_pieces ? item.packet_pieces : '0';
         this.admin.user_price_of_packet = item.user_price_of_packet;
         this.admin.library_price_of_packet = item.library_price_of_packet;
+        this.admin.piece_wholesale_price = item.piece_wholesale_price;
+        this.admin.packet_wholesale_price = item.packet_wholesale_price;
         this.admin.offer = item.offer;
         this.admin.view_image = item.image;
         this.admin.image = "";
@@ -1046,6 +1184,8 @@ export default {
       let formdata = new FormData();
       if (this.admin.name) formdata.append("name", this.admin.name);
       if (this.admin.name_ar) formdata.append("name_ar", this.admin.name_ar);
+      if (this.admin.searching_name) formdata.append("searching_name", this.admin.searching_name);
+      if (this.admin.searching_name_ar) formdata.append("searching_name_ar", this.admin.searching_name_ar);
       if (this.admin.desc) formdata.append("desc", this.admin.desc);
       if (this.admin.stock) formdata.append("stock", Number(this.admin.stock));
       if (this.admin.user_price_of_piece) formdata.append("user_price_of_piece", Number(this.admin.user_price_of_piece));
@@ -1053,6 +1193,8 @@ export default {
       if (this.admin.packet_pieces) formdata.append("packet_pieces", Number(this.admin.packet_pieces));
       if (this.admin.user_price_of_packet) formdata.append("user_price_of_packet", Number(this.admin.user_price_of_packet));
       if (this.admin.library_price_of_packet) formdata.append("library_price_of_packet", Number(this.admin.library_price_of_packet));
+      if (this.admin.piece_wholesale_price) formdata.append("piece_wholesale_price", Number(this.admin.piece_wholesale_price));
+      if (this.admin.packet_wholesale_price) formdata.append("packet_wholesale_price", Number(this.admin.packet_wholesale_price));
       if (this.admin.offer) formdata.append("offer", Number(this.admin.offer));
       if (this.admin.image) formdata.append("image", this.admin.image);
       if (this.admin.category_id) formdata.append("category_id", this.admin.category_id);
@@ -1113,6 +1255,8 @@ export default {
                 id: null,
                 name: "",
                 name_ar: "",
+                searching_name: "",
+                searching_name_ar: "",
                 desc: "",
                 stock: null,
                 user_price_of_piece: null,
@@ -1120,6 +1264,8 @@ export default {
                 packet_pieces: null,
                 user_price_of_packet: null,
                 library_price_of_packet: null,
+                piece_wholesale_price: 0,
+                packet_wholesale_price: 0,
                 offer: null,
                 image: "",
                 category_id: null,
@@ -1155,6 +1301,8 @@ export default {
                 id: null,
                 name: "",
                 name_ar: "",
+                searching_name: "",
+                searching_name_ar: "",
                 desc: "",
                 stock: null,
                 user_price_of_piece: null,
@@ -1162,6 +1310,8 @@ export default {
                 packet_pieces: null,
                 user_price_of_packet: null,
                 library_price_of_packet: null,
+                piece_wholesale_price:0,
+                packet_wholesale_price:0,
                 offer: null,
                 image: "",
                 category_id: null,
@@ -1185,7 +1335,29 @@ export default {
         this.$http.delete(`${this.baseApi}/api/admin/products/${item.id}`).then((res) => {
           this.showNotification("تمت العملية بنجاح");
           this.fetch();
-          this.alert.message = "Delete user done";
+          this.alert.message = "Delete Product done";
+          this.alert.type = "success";
+        });
+      }
+    },
+    softdeleteItem(item) {
+       // const index = this.requests.indexOf(item);
+       if (confirm("هل تود توقيف  هذا العنصر ؟")) {
+        this.$http.delete(`${this.baseApi}/api/admin/products/softDelete/${item.id}`).then((res) => {
+          this.showNotification("تمت العملية بنجاح");
+          this.fetch();
+          this.alert.message = "Stop product done";
+          this.alert.type = "success";
+        });
+      }
+    },
+    restoreItem(item) {
+       // const index = this.requests.indexOf(item);
+       if (confirm("هل تود استرجاع  هذا العنصر ؟")) {
+        this.$http.delete(`${this.baseApi}/api/admin/products/restore/${item.id}`).then((res) => {
+          this.showNotification("تمت العملية بنجاح");
+          this.fetch();
+          this.alert.message = "restore product done";
           this.alert.type = "success";
         });
       }

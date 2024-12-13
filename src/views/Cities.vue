@@ -55,6 +55,13 @@
                     label="الإسم بالعربي"
                     prepend-icon="mail"
                   />
+
+                  <VTextFieldWithValidation
+                    rules="required|min:0|max:100"
+                    v-model="admin.delivery_discount_percentage"
+                    label="نسبة الخصم علي كل المناطق التابعة"
+                    prepend-icon="mail"
+                  />
                   
                   <VSelectWithValidation
                     label="المحافظة"
@@ -193,6 +200,13 @@
           <v-chip v-else small color="secondary" dark>غير متوفر</v-chip>
         </template>
 
+        <template v-slot:[`item.delivery_discount_percentage`]="{ item }">
+          <div v-if="item.delivery_discount_percentage != null">
+            <span>{{ item.delivery_discount_percentage }}</span>
+          </div>
+          <v-chip v-else small color="secondary" dark>غير متوفر</v-chip>
+        </template>
+
         <template v-slot:[`item.created_at`]="{ item }">
           <span v-if="item.created_at != null">{{ item.created_at | moment("dddd, MMMM Do YYYY") }}</span>
           <v-chip v-else small color="secondary" dark>غير متوفر</v-chip>
@@ -290,6 +304,7 @@ export default {
     admin: {
       name: "",
       name_ar: "",
+      delivery_discount_percentage:0,
       governorate_id: ""
     },
     filter: {
@@ -310,6 +325,7 @@ export default {
       { text: "#", value: "id", ...headerConst },
       { text: "الاسم", value: "name", ...headerConst },
       { text: "الاسم بالعربية", value: "name_ar", ...headerConst },
+      { text: "نسبة الخصم علي كل المناطق التابعة", value: "delivery_discount_percentage", ...headerConst },
       { text: "المحافظة", value: "governorate", ...headerConst },
       { text: "أنشئت في", value: "created_at", ...headerConst },
       { text: "تم التحديث في", value: "updated_at", ...headerConst },
@@ -486,6 +502,7 @@ export default {
       this.admin = {
         name: "",
         name_ar: "",
+        delivery_discount_percentage:0,
         governorate_id: ""
       };
     },
@@ -505,6 +522,7 @@ export default {
       this.admin.id = item.id;
       this.admin.name = item.name;
       this.admin.name_ar = item.name_ar;
+      this.admin.delivery_discount_percentage = item.delivery_discount_percentage;
       this.admin.governorate_id = item.governorate_id
     },
     saveItem() {
@@ -512,6 +530,7 @@ export default {
       let formdata = new FormData();
       if (this.admin.name) formdata.append("name", this.admin.name);
       if (this.admin.name_ar) formdata.append("name_ar", this.admin.name_ar);
+      if (this.admin.delivery_discount_percentage) formdata.append("delivery_discount_percentage", this.admin.delivery_discount_percentage);
       if (this.admin.governorate_id) formdata.append("governorate_id", this.admin.governorate_id);
 
       if (this.edit) {
@@ -520,6 +539,7 @@ export default {
           .put(endpoint, {
             name: this.admin.name,
             name_ar: this.admin.name_ar,
+            delivery_discount_percentage: this.admin.delivery_discount_percentage,
             governorate_id: this.admin.governorate_id,
           })
           .then((res) => {
@@ -543,6 +563,7 @@ export default {
                 id: null,
                 name: "",
                 name_ar: "",
+                delivery_discount_percentage:0,
                 governorate_id: "",
               };
               this.connecting = false;
@@ -571,6 +592,7 @@ export default {
                 id: null,
                 name: "",
                 name_ar: "",
+                delivery_discount_percentage:0,
                 governorate_id: "",
               };
               this.connecting = false;
