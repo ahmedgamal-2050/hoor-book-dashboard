@@ -127,6 +127,13 @@ const routes = [
     secure: true
   },
   {
+    path: '/settings',
+    name: 'Settings',
+    component: loadView('Settings'),
+    meta: { layout: 'default' },
+    secure: true
+  },
+  {
     path: '/auth/login',
     name: 'Login',
     component: loadView('auth/Login'),

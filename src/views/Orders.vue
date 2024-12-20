@@ -382,6 +382,9 @@
             <div v-if="item.discount != null">
               <b>قيمة الخصم: </b><span>{{ item.discount }}</span>
             </div>
+            <div v-if="item.discount != null">
+              <b> قيمة خصم النقاط: </b><span>{{ item.points_discount }}</span>
+            </div>
             <div v-if="item.delivery_fee != null">
               <b>رسوم التوصيل: </b><span>{{ item.delivery_fee }}</span>
             </div>

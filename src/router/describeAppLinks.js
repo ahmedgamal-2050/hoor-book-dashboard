@@ -68,6 +68,11 @@ export default [
                 path: '/shipping-companies',
                 icon: 'local_shipping',
                 title: 'شركات الشحن'
+            },
+            {
+                path: '/settings',
+                icon: 'settings',
+                title: 'الاعدادات'
             }
         ]
     },
