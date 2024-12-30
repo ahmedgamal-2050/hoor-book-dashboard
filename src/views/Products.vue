@@ -126,7 +126,7 @@
 
                   <VTextFieldWithValidation
                     rules="required|regex:^[0-9]*$"
-                    label="عدد الرزم"
+                    label="عدد القطع داخل الدستة"
                     v-model="admin.packet_pieces"
                     prepend-icon="lock"
                     type="text"
@@ -569,6 +569,15 @@
                         />
                       </v-col>
 
+                      <v-col class="pa-2" cols="12" lg="4" sm="6">
+                        <v-checkbox
+                          v-model="filter.deleted_at"
+                          label="المنتجات المحذوفة مؤقتا"
+                          color="success"
+                          ></v-checkbox>
+                      </v-col>
+
+
                     </v-row>
                                     
                   </v-card-text>
@@ -895,6 +904,7 @@ export default {
       searching_name: "",
       searching_name_ar: "",
       category_id: null,
+      deleted_at: false,
       sortingModel:{
         sortingExpression:'stock',
         sortingDirection: null
@@ -1066,6 +1076,7 @@ export default {
         let endpoint = `${this.baseApi}/api/admin/products?page=${this.page}`;
         if (this.filter.name != '') endpoint += `&name=${this.filter.name}`;
         if (this.filter.category_id != null) endpoint += `&category_id=${this.filter.category_id}`;
+        if (this.filter.deleted_at != false) endpoint += `&deleted_at=${this.filter.deleted_at}`;
         if (this.filter.sortingModel.sortingDirection != null) {
     endpoint += `&sortingModel[sortingExpression]=${encodeURIComponent(this.filter.sortingModel.sortingExpression)}` +
                 `&sortingModel[sortingDirection]=${encodeURIComponent(this.filter.sortingModel.sortingDirection)}`;
@@ -1097,7 +1108,12 @@ export default {
         name_ar: "",
         searching_name: "",
         searching_name_ar: "",
-        category_id: null
+        deleted_at:false,
+        category_id: null,
+        sortingModel:{
+            sortingExpression:'stock',
+            sortingDirection: null
+      }
       };
     },
     close() {
