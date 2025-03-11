@@ -498,6 +498,44 @@
           </v-card>
         </v-dialog>
         <!-- End Add/Edit Dialog Form -->
+        <!-- Start Print Dialog Form -->
+        <v-dialog v-model="printDialog" persistent max-width="600px">
+  <v-card>
+    <v-card-title>
+      <span></span>
+      <v-spacer></v-spacer>
+      <v-btn icon small @click="close">
+        <v-icon>close</v-icon>
+      </v-btn>
+    </v-card-title>
+    <v-card-text id="print_info" v-if="print_info">
+        <!-- Center QR Code Properly -->
+        <div class="d-flex justify-center qrcode-print">
+          <vue-qrcode :text="String(print_info.id)" :size="50" ></vue-qrcode>
+        </div>
+        <!-- Center Text -->
+        <div class=" text-center product-id" >
+          {{ print_info.id }}
+        </div>
+        <div class=" text-center product-name">
+          {{ print_info.name }}
+        </div>
+        <!-- Center the Span -->
+        <div class="pt-1 text-center">
+          <span class="px-2 printing-padding" style="border:1px solid black">
+            HoorBook - حور بوك
+          </span>                  
+        </div> 
+      
+    </v-card-text>
+    <v-card-actions>
+      <v-btn @click="print" color="primary">طباعة</v-btn>
+      <v-btn @click="close" color="secondary">إغلاق</v-btn>
+    </v-card-actions>
+  </v-card>
+</v-dialog>
+
+        <!-- End Add/Edit Dialog Form -->
 
         <v-spacer></v-spacer>
 
@@ -714,6 +752,7 @@
           <v-chip v-else small color="secondary" dark>غير متوفر</v-chip>
         </template>
 
+
         <template v-slot:[`item.reviews_avg`]="{ item }">
           <div v-if="item.reviews_avg != null">
             <b>متوسط التقييمات: </b> {{ item.reviews_avg }}
@@ -755,6 +794,21 @@
           </v-tooltip>
           <!-- end async admin/role action -->
 
+          <v-tooltip right>
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn
+                color="black"
+                icon
+                x-small
+                v-bind="attrs"
+                v-on="on"
+                @click="viewPrintDialog(item)"
+              >
+                <v-icon>print</v-icon>
+              </v-btn>
+            </template>
+            <span>طباعة</span>
+          </v-tooltip>
           <!-- start Add-Edit action -->
           <v-tooltip right>
             <template v-slot:activator="{ on, attrs }">
@@ -863,6 +917,7 @@ import VTextAreaWithValidation from "../components/inputs/VTextAreaWithValidatio
 
 import { mapActions } from "vuex";
 import { BASE_API } from "../config/config";
+import VueQrcode from "vue-qrcode-component";
 
 export default {
   props: {
@@ -891,6 +946,7 @@ export default {
       piece_wholesale_price:0,
       packet_wholesale_price:0,
       offer: null,
+      qrcode:"",
       image: "",
       category_id: null,
       media: [],
@@ -898,6 +954,7 @@ export default {
       slider_image: "",
       slider: false,
     },
+    print_info: null,
     filter: {
       name: "",
       name_ar: "",
@@ -968,6 +1025,7 @@ export default {
     VSelectWithValidation,
     VSelectColorWithValidation,
     VTextAreaWithValidation,
+    VueQrcode
   },
   computed: {
     formTitle() {
@@ -996,6 +1054,72 @@ export default {
   },
   methods: {
     ...mapActions(["showNotification"]),
+    viewPrintDialog(item) {
+      this.printDialog = !this.printDialog;
+      this.print_info = item;
+      console.log('print_info >>', this.print_info);
+    },
+    print() {
+    const printContent = document.getElementById('print_info').innerHTML;
+    const printWindow = window.open('', '_blank', 'width=600,height=400');
+
+    printWindow.document.open();
+
+    // Define print styles
+    const styles = `
+  <style>
+    @media print {
+      .qrcode-print {  
+        display: flex; 
+        justify-content: center; 
+        align-items: center;
+        margin-bottom: 2px; /* Reduce space below QR code */
+      }
+
+      .product-id,  
+      .product-name {  
+        margin: 1px 0;  /* Minimal space */
+        padding: 0;  /* Remove any padding */
+        text-align: center; 
+        font-size: 16px; /* Slightly smaller font */
+        line-height: 1.2; /* Reduce line height */
+      }
+
+      .printing-padding {  
+        padding: 3px; /* Reduce padding */
+        border: 1px solid black; 
+        display: block; 
+        text-align: center; 
+        width: fit-content;  
+        margin: 3px auto; /* Reduce spacing */
+      }
+    }
+  </style>
+`;
+
+    printWindow.document.write(`
+      <html>
+        <head>
+          <title>Print</title>
+          ${styles}
+        </head>
+        <body>
+          <div class="qr-container">
+            ${printContent}
+          </div>
+        </body>
+      </html>
+    `);
+
+    printWindow.document.close();
+    printWindow.focus();
+
+    setTimeout(() => {
+      printWindow.print();
+      printWindow.onafterprint = () => printWindow.close();
+    }, 500);
+},
+
     fetch() {
       this.getDataFromApi().then((data) => {
         this.requests = JSON.parse(JSON.stringify(data.items));
@@ -1119,6 +1243,8 @@ export default {
     close() {
       this.errors = [];
       this.dialog = false;
+      this.print_info = null;
+      this.printDialog = false;
       this.viewDescriptionDialog = false;
       this.admin = {
         name: "",
@@ -1542,4 +1668,5 @@ export default {
   height: 48px;
   margin-top: 8px;
 }
+
 </style>

@@ -137,6 +137,17 @@
                           type="text"
                         />
                       </v-col>
+                      <v-col class="pa-2" cols="12" lg="4" sm="6">
+                      <VSelectWithValidation
+                          label="المحافظة"
+                          rules="required"
+                          :items="governorate_ids"
+                          item-text="name"
+                          item-value="id"           
+                          prepend-icon="lock"
+                          v-model="filter.governorate_id"
+                        />
+                      </v-col>
                     </v-row>      
                   </v-card-text>
 
@@ -309,6 +320,7 @@ export default {
     },
     filter: {
       name: "",
+      governorate_id:""
     },
     panel: [ 0 ],
     isFiltering: false,
@@ -451,6 +463,7 @@ export default {
       return new Promise((resolve) => {
         let endpoint = `${this.baseApi}/api/admin/cities?page=${this.page}`;
         if (this.filter.name != '') endpoint += `&name=${this.filter.name}`;
+        if (this.filter.governorate_id != '') endpoint += `&governorate_id=${this.filter.governorate_id}`;
 
         this.$http.get(endpoint).then((res) => {
           this.isFiltering = true;

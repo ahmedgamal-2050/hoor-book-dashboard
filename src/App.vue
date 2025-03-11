@@ -101,5 +101,9 @@ body {
   * {
     line-height: 1.45 !important;
   }
+  
+  .printing-padding {
+  margin-top: 30px; /* Apply margin to top */
+}
 }
 </style>

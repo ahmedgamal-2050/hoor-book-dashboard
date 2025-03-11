@@ -140,6 +140,17 @@
                           type="text"
                         />
                       </v-col>
+                        <v-col class="pa-2" cols="12" lg="4" sm="6">
+                        <VSelectWithValidation
+                          label="المدينة"
+                          :items="cities_ids"
+                          item-text="name"
+                          item-value="id"
+                          prepend-icon="lock"
+                          v-model="filter.city_id"
+                        />
+
+                      </v-col>
                     </v-row>      
                   </v-card-text>
 
@@ -312,6 +323,7 @@ export default {
     },
     filter: {
       name: "",
+      city_id:""
     },
     panel: [ 0 ],
     isFiltering: false,
@@ -448,7 +460,9 @@ export default {
       return new Promise((resolve) => {
         let endpoint = `${this.baseApi}/api/admin/areas?page=${this.page}`;
         if (this.filter.name != '') endpoint += `&name=${this.filter.name}`;
+        if (this.filter.city_id != '') endpoint += `&city_id=${this.filter.city_id}`;
 
+        
         this.$http.get(endpoint).then((res) => {
           this.isFiltering = true;
           let items = res.data.data;

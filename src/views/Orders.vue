@@ -289,7 +289,15 @@
                           v-model="filter.user_type"
                         />
                       </v-col>
-
+                     
+                      <v-col class="pa-2" cols="12" lg="4" sm="6">
+                        <VTextFieldWithValidation
+                          label="ايميل العميل"
+                          prepend-icon="lock"
+                          v-model="filter.user_email"
+                          type="text"
+                        />
+                      </v-col>
                     </v-row>
                                     
                   </v-card-text>
@@ -586,6 +594,7 @@ export default {
       shipping_companies_id: null,
       payment_status: "",
       user_type: "",
+      user_email:"",
       date: null,
     },
     panel: [ 0 ],
@@ -728,6 +737,7 @@ export default {
         if (this.filter.shipping_companies_id != null) endpoint += `&shipping_companies_id=${this.filter.shipping_companies_id}`;
         if (this.filter.payment_status != '') endpoint += `&payment_status=${this.filter.payment_status}`;
         if (this.filter.user_type != '') endpoint += `&user_type=${this.filter.user_type}`;
+        if (this.filter.user_email != null) endpoint += `&user_email=${this.filter.user_email}`;
         if (this.filter.date != null) endpoint += `&date=${this.filter.date}`;
 
         this.$http.get(endpoint).then((res) => {
@@ -757,7 +767,8 @@ export default {
         status: "",
         shipping_companies_id: null,
         payment_status: "",
-        user_type: ""
+        user_type: "",
+        user_email:""
       };
     },
     getShippingCampaniesId(res = null) {
