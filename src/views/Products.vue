@@ -149,9 +149,8 @@
                   />
 
                   <VTextFieldWithValidation
-                    rules="required|regex:^[0-9.]*$"
-                    label="سعر الرزمة للمكتبة"
-                    v-model="admin.library_price_of_packet"
+                    label="كود المنتج"
+                    v-model="admin.serial_number"
                     prepend-icon="lock"
                     type="text"
                   />
@@ -608,6 +607,15 @@
                       </v-col>
 
                       <v-col class="pa-2" cols="12" lg="4" sm="6">
+                        <VTextFieldWithValidation
+                          label="كود المنتج"
+                          v-model="filter.serial_number"
+                          prepend-icon="lock"
+                          type="text"
+                        />
+                      </v-col>
+
+                      <v-col class="pa-2" cols="12" lg="4" sm="6">
                         <v-checkbox
                           v-model="filter.deleted_at"
                           label="المنتجات المحذوفة مؤقتا"
@@ -943,6 +951,7 @@ export default {
       packet_pieces: null,
       user_price_of_packet: null,
       library_price_of_packet: null,
+      serial_number:null,
       piece_wholesale_price:0,
       packet_wholesale_price:0,
       offer: null,
@@ -960,6 +969,7 @@ export default {
       name_ar: "",
       searching_name: "",
       searching_name_ar: "",
+      serial_number: "",
       category_id: null,
       deleted_at: false,
       sortingModel:{
@@ -1201,6 +1211,7 @@ export default {
         if (this.filter.name != '') endpoint += `&name=${this.filter.name}`;
         if (this.filter.category_id != null) endpoint += `&category_id=${this.filter.category_id}`;
         if (this.filter.deleted_at != false) endpoint += `&deleted_at=${this.filter.deleted_at}`;
+        if (this.filter.serial_number != false) endpoint += `&serial_number=${this.filter.serial_number}`;
         if (this.filter.sortingModel.sortingDirection != null) {
     endpoint += `&sortingModel[sortingExpression]=${encodeURIComponent(this.filter.sortingModel.sortingExpression)}` +
                 `&sortingModel[sortingDirection]=${encodeURIComponent(this.filter.sortingModel.sortingDirection)}`;
@@ -1232,6 +1243,7 @@ export default {
         name_ar: "",
         searching_name: "",
         searching_name_ar: "",
+        serial_number:"",
         deleted_at:false,
         category_id: null,
         sortingModel:{
@@ -1258,6 +1270,7 @@ export default {
         packet_pieces: null,
         user_price_of_packet: null,
         library_price_of_packet: null,
+        serial_number:null,
         offer: null,
         image: "",
         category_id: null,
@@ -1297,6 +1310,7 @@ export default {
         this.admin.packet_pieces = item.packet_pieces ? item.packet_pieces : '0';
         this.admin.user_price_of_packet = item.user_price_of_packet;
         this.admin.library_price_of_packet = item.library_price_of_packet;
+        this.admin.serial_number = item.serial_number;        
         this.admin.piece_wholesale_price = item.piece_wholesale_price;
         this.admin.packet_wholesale_price = item.packet_wholesale_price;
         this.admin.offer = item.offer;
@@ -1335,6 +1349,7 @@ export default {
       if (this.admin.packet_pieces) formdata.append("packet_pieces", Number(this.admin.packet_pieces));
       if (this.admin.user_price_of_packet) formdata.append("user_price_of_packet", Number(this.admin.user_price_of_packet));
       if (this.admin.library_price_of_packet) formdata.append("library_price_of_packet", Number(this.admin.library_price_of_packet));
+      if (this.admin.serial_number) formdata.append("serial_number", this.admin.serial_number);
       if (this.admin.piece_wholesale_price) formdata.append("piece_wholesale_price", Number(this.admin.piece_wholesale_price));
       if (this.admin.packet_wholesale_price) formdata.append("packet_wholesale_price", Number(this.admin.packet_wholesale_price));
       if (this.admin.offer) formdata.append("offer", Number(this.admin.offer));
@@ -1406,6 +1421,7 @@ export default {
                 packet_pieces: null,
                 user_price_of_packet: null,
                 library_price_of_packet: null,
+                serial_number: null,
                 piece_wholesale_price: 0,
                 packet_wholesale_price: 0,
                 offer: null,
@@ -1452,6 +1468,7 @@ export default {
                 packet_pieces: null,
                 user_price_of_packet: null,
                 library_price_of_packet: null,
+                serial_number: null,
                 piece_wholesale_price:0,
                 packet_wholesale_price:0,
                 offer: null,
